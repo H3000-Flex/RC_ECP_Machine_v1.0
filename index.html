@@ -1,0 +1,1639 @@
+<!-- ══════════════════════════════════════════════════════════════════════════════════
+     RC Eye Candy Prompt Machine V1.0 | Powered by Claude and operated by Vorticoso.Com
+     All rights reserved | RodeoClip.Com © 2026
+     ══════════════════════════════════════════════════════════════════════════════ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/x-icon" href="images/rodeoclip.ico">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RODEO Clip | Eye Candy Prompt Machine V1.0</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@2.44.0/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-primary:#0f1520;--bg-secondary:#1a2332;--bg-tertiary:#141d2a;
+  --text-primary:#fff;--text-secondary:#a0a8b8;--text-tertiary:#7a8290;
+  --accent:#ff6b5b;--accent-dark:#ff5a48;--border:#2a3548;--card:#1a2332;
+}
+/* ── Link colors ── */
+a                { color: var(--accent); text-decoration: none; }
+a:visited        { color: var(--accent); opacity: .100; }
+a:hover          { color: var(--accent); opacity: .99; text-decoration: underline; }
+a:active         { color: var(--text-primary); }
+a:focus          { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ms-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:.4rem;max-height:160px;overflow-y:auto;margin-top:.4rem}
+.ms-char-item{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;padding:.4rem;cursor:pointer;text-align:center;font-size:.7rem;transition:border-color .15s}
+.ms-char-item:hover,.ms-char-item.selected{border-color:var(--accent);background:rgba(255,107,91,.1)}
+.ms-char-item img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;display:block;margin-bottom:.25rem}
+.ms-lib-item{position:relative;border:2px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;aspect-ratio:4/3}
+.ms-lib-item img{width:100%;height:100%;object-fit:cover;display:block}
+.ms-lib-item:hover,.ms-lib-item.selected{border-color:var(--accent)}
+.ms-lib-item.selected::after{content:'✓';position:absolute;top:2px;right:4px;color:var(--accent);font-weight:900;font-size:.8rem}
+.ms-syntax-tag{display:inline-block;padding:.2rem .5rem;border-radius:4px;font-size:.68rem;font-weight:600;margin-left:.5rem;vertical-align:middle}
+.ms-syntax-seedance{background:rgba(79,195,247,.15);color:#4fc3f7}
+.ms-syntax-kling{background:rgba(77,182,172,.15);color:#4db6ac}
+
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;overflow-x:hidden}
+.hero{position:relative;height: 340px;padding:1rem 2rem;border-bottom:0px solid var(--border);overflow:hidden;background:var(--bg-primary)}
+.hero-bg{position:absolute;top:-80px;left:0;width:100%;height:500px;object-fit:cover;object-position:center;z-index:0;pointer-events:none;will-change:transform;transform-origin:top center;}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(15, 21, 32, var(--hero-overlay-top, 0.10)),
+    rgba(15, 21, 32, var(--hero-overlay-bot, 0.30))
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-content{position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;padding:0}
+.hero-content img{width:auto;height:auto;display:block;max-width:100%}
+.container{position:sticky;z-index:100;background:var(--bg-primary);width:100%;padding:1rem 2rem}.tabs,.editor-grid{max-width:1400px;margin-left:auto;margin-right:auto;}
+.container {border-bottom: 0px solid var(--border);}
+.editor-grid{display:grid;grid-template-columns:1fr 390px;gap:2rem;align-items:start}
+
+@media(max-width:1200px){.editor-grid{grid-template-columns:1fr}}
+
+@media (max-width: 600px) {
+/* Let the hero shrink to fit its content instead of staying at 340px */
+.hero {height: auto;min-height: unset;padding: 0.75rem 1rem;}
+/* Re-anchor the background image so it fills the smaller hero */
+.hero-bg {top: 0;height: 100%;}
+/* Scale the header logo image down to fit */
+.hero-content img {width: 100%;max-width: 480px;height: auto;}
+/* Reduce side padding on the main container */
+.container {padding: 0.75rem 1rem;}
+/* Let the tab bar wrap on very small screens */
+.tabs {flex-wrap: wrap;gap: 0.2rem;margin-bottom: 1.5rem;}
+.tab-btn {font-size: 0.78rem;padding: 0.35rem 0.6rem;}
+}
+
+.sidebar{display:flex;flex-direction:column;gap:.1rem;position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow-y:auto;padding-right:3px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.output-panel{background:var(--card);border:1px solid var(--accent);border-radius:12px;padding:1.1rem;flex-shrink:0;position:sticky;top:0;z-index:20;margin-bottom:.5rem}
+h3[onclick="toggleFold(this)"] {
+  position: sticky;
+  top: 220px;   /* adjust this value to match the height of your Generated Prompt panel */
+  z-index: 9;
+}
+.output-panel-title{font-size:.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem;display:flex;align-items:center;gap:.35rem}
+.prompt-output{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'Monaco','Courier New',monospace;font-size:.8rem;line-height:1.6;color:var(--text-secondary);max-height:320px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:.7rem;scrollbar-width:thin}
+.tabs{display:flex;gap:.4rem;margin-bottom:3rem;border-bottom:1px solid var(--border);flex-wrap:wrap;padding-bottom:1rem}
+.tab-btn{padding:.75rem 1.4rem;background:transparent;border:none;color:var(--text-secondary);font-size:.9rem;font-weight:500;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.45rem;border-bottom:2px solid transparent;margin-bottom:-1rem;padding-bottom:1.75rem}
+.tab-btn:hover{color:var(--text-primary)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.card-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem}
+.card-section h2{font-size:1.3rem;margin-bottom:1.5rem;color:var(--text-primary)}
+.form-group{margin-bottom:1.4rem}
+.form-label{display:block;font-size:.78rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.55rem}
+.form-label-sub{font-size:.72rem;color:var(--text-tertiary);font-weight:400;text-transform:none}
+select,input[type="text"],input[type="number"],textarea{width:100%;padding:.8rem;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:'Monaco','Courier New',monospace;font-size:.85rem;transition:all .2s}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);background:var(--bg-secondary);box-shadow:0 0 0 3px rgba(255,107,91,.1)}
+textarea{resize:vertical;min-height:78px}
+.model-selector{background:rgba(255,107,91,.1);border:1px solid var(--accent);border-radius:8px;padding:.9rem;margin-bottom:1.4rem}
+.model-info{font-size:.78rem;color:var(--text-secondary);margin-top:.35rem}
+.camera-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.5rem}
+.camera-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:.65rem .7rem;cursor:pointer;transition:all .2s;position:relative}
+.camera-card:hover{border-color:rgba(255,107,91,.5);background:rgba(255,107,91,.04)}
+.camera-card.selected{border-color:var(--accent);background:rgba(255,107,91,.1)}
+.camera-card.selected::after{content:'✓';position:absolute;top:4px;right:6px;color:var(--accent);font-size:.7rem;font-weight:700}
+.cam-name{font-size:.72rem;font-weight:700;color:var(--text-primary);line-height:1.2;margin-bottom:.15rem}
+.cam-desc{font-size:.65rem;color:var(--text-tertiary);line-height:1.2}
+.camera-body-field{margin-top:.5rem;min-height:50px!important}
+.movie-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
+@media(max-width:900px){.movie-grid{grid-template-columns:repeat(2,1fr)}}
+.movie-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:.65rem .4rem;cursor:pointer;transition:all .2s;text-align:center}
+.movie-card:hover{border-color:rgba(255,107,91,.5);background:rgba(255,107,91,.04)}
+.movie-card.selected{border-color:var(--accent);background:rgba(255,107,91,.1)}
+.movie-card.selected .movie-name{color:var(--accent)}
+.movie-icon{font-size:1.3rem;line-height:1;margin-bottom:.25rem}
+.movie-name{font-size:.7rem;font-weight:600;color:var(--text-primary);line-height:1.2}
+.button-group{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:1.5rem}
+button{padding:.65rem 1rem;background:transparent;border:1px solid var(--border);color:var(--text-primary);border-radius:6px;cursor:pointer;font-weight:500;transition:all .2s;display:flex;align-items:center;gap:.45rem;font-size:.85rem}
+button:hover{border-color:var(--accent);color:var(--accent);background:rgba(255,107,91,.04)}
+button.primary{background:var(--accent);color:white;border-color:var(--accent)}
+button.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+button.danger{background:transparent;border-color:#e53e3e;color:#e53e3e}
+button.danger:hover{background:rgba(229,62,62,.1)}
+.preset-card h3 .fold-arrow { color: #ff6b5b; }
+.preset-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+.preset-card h3{font-size:.82rem;margin-bottom:0;color:var(--text-secondary);display:flex;align-items:center;gap:.4rem;cursor:pointer;user-select:none;justify-content:space-between;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;padding:.55rem .85rem;transition:border-color .2s,color .2s}
+.preset-card h3:hover{color:var(--accent);border-color:var(--accent)}
+.preset-card h3 .fold-arrow{font-size:.7rem;color:#ff6b5b;transition:transform .25s, color .25s;display:inline-block;margin-left:auto;padding-left:.4rem}
+.preset-card.collapsed h3 .fold-arrow{transform:rotate(-90deg);color:#888}
+.preset-card .fold-body{overflow:hidden;transition:max-height .3s ease,opacity .25s ease;max-height:9000px;opacity:1;padding-top:.65rem;margin-bottom:.5rem}
+.preset-card.collapsed .fold-body{max-height:0;opacity:0;pointer-events:none;padding-top:0;margin-bottom:0}
+
+.preset-btn{display:block;width:100%;padding:.5rem;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);text-align:center;cursor:pointer;font-size:.77rem;transition:all .2s;margin-bottom:.35rem}
+.preset-btn:hover{border-color:var(--accent);background:rgba(255,107,91,.05);color:var(--accent)}.btn-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;}
+.angle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:.45rem}
+.angle-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;overflow:hidden;text-align:center}
+.angle-card:hover{border-color:var(--accent);transform:scale(1.04);z-index:2;position:relative}
+.angle-card.selected{border-color:var(--accent);background:rgba(255,107,91,.1)}
+.angle-preview{display:block;width:100%}
+.angle-preview svg{display:block;width:100%;height:auto}
+.angle-name{font-size:.6rem;color:var(--text-secondary);padding:.2rem .15rem .25rem;line-height:1.2;display:block}
+.shot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;margin-bottom:2rem}
+.shot-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;position:relative;transition:all .3s}
+.shot-card:hover{border-color:var(--accent);box-shadow:0 8px 24px rgba(255,107,91,.1)}
+.shot-number{display:inline-block;background:var(--accent);color:white;padding:.25rem .75rem;border-radius:4px;font-size:.78rem;font-weight:600;margin-bottom:.9rem}
+.shot-meta{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-tertiary);margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.shot-model{color:var(--accent);font-weight:600}
+.shot-preview{font-size:.83rem;color:var(--text-secondary);line-height:1.5;margin-bottom:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.shot-actions{display:flex;gap:.45rem}
+.shot-actions button{flex:1;padding:.45rem;font-size:.82rem}
+.timeline{display:flex;align-items:center;gap:.45rem;margin-bottom:1.5rem;overflow-x:auto;padding:.75rem 0}
+.timeline-item{min-width:48px;height:48px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.88rem;color:white}
+.timeline-arrow{color:var(--text-tertiary);font-size:18px}
+.info-box{background:rgba(255,107,91,.1);border:1px solid var(--accent);border-radius:8px;padding:.9rem;font-size:.88rem;color:var(--text-secondary);margin-bottom:1.5rem}
+.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;margin-bottom:2rem}
+.library-item{aspect-ratio:1;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:all .3s}
+.library-item:hover{border-color:var(--accent)}
+.library-item img{width:100%;height:100%;object-fit:cover}
+.empty-state{text-align:center;padding:3rem;color:var(--text-tertiary)}
+.empty-state i{font-size:48px;margin-bottom:1rem;opacity:.5}
+h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.modal.active{display:flex}
+.modal-content{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:1.4rem;margin-bottom:1.4rem;color:var(--text-primary)}
+.modal-buttons{display:flex;gap:.9rem;margin-top:1.75rem}
+.modal-buttons button{flex:1}
+/* CHARACTER PORTRAIT */
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.85rem;margin-bottom:2rem}
+.char-card-sm{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.75rem;display:flex;flex-direction:column}
+.char-portrait{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;display:block;margin-bottom:.55rem;background:var(--bg-tertiary)}
+.char-portrait-placeholder{width:100%;aspect-ratio:4/3;border-radius:6px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;margin-bottom:.55rem;color:var(--text-tertiary);font-size:1.6rem}
+.char-upload-area{border:2px dashed var(--border);border-radius:8px;padding:1.2rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+.char-upload-area:hover{border-color:var(--accent);color:var(--accent)}
+.char-img-preview{width:100%;max-height:160px;object-fit:cover;border-radius:6px;display:none;margin-top:.6rem}
+.char-use-btn{font-size:.75rem;padding:.35rem .7rem;margin-top:.5rem}
+/* WORKFLOW BUILDER */
+.lens-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:.45rem;margin-top:.5rem}
+.lens-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;overflow:hidden;text-align:center;padding-bottom:.3rem}
+.lens-card:hover{border-color:var(--accent);transform:scale(1.04);z-index:2;position:relative}
+.lens-card.selected{border-color:var(--accent);background:rgba(255,107,91,.1);box-shadow:0 0 0 1px var(--accent)}
+.lens-card svg{display:block;width:100%;height:auto}
+.lens-name{font-size:.62rem;color:var(--text-secondary);padding:.15rem .3rem 0;line-height:1.2;pointer-events:none}
+.lens-body-field{margin-top:.5rem;min-height:44px!important;font-size:.8rem}
+.folder-section{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.folder-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.folder-title{font-size:.85rem;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:.45rem}
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.7rem}
+.folder-thumb{position:relative;border-radius:8px;overflow:hidden;background:var(--bg-tertiary);aspect-ratio:4/3;cursor:pointer;border:1px solid var(--border);transition:border-color .2s}
+.folder-thumb:hover{border-color:var(--accent)}
+.folder-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.folder-thumb .f-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);font-size:.62rem;color:#fff;padding:.25rem .4rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-thumb .f-add{position:absolute;top:4px;right:4px;background:var(--accent);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:.7rem;cursor:pointer;opacity:0;transition:opacity .2s}
+.folder-thumb:hover .f-add{opacity:1}
+.folder-empty{color:var(--text-muted);font-size:.82rem;text-align:center;padding:1.5rem 0}
+.at-dropdown{position:fixed;z-index:9999;background:var(--bg-secondary);border:1px solid var(--accent);border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);min-width:240px;max-width:340px;max-height:260px;overflow-y:auto;display:none;padding:.35rem}
+.at-item{display:flex;align-items:center;gap:.7rem;padding:.55rem .7rem;border-radius:7px;cursor:pointer;transition:background .15s}
+.at-item:hover{background:var(--bg-tertiary)}
+.at-avatar{width:32px;height:32px;border-radius:6px;object-fit:cover;flex-shrink:0}
+.at-avatar-ph{width:32px;height:32px;border-radius:6px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.at-name{font-weight:600;font-size:.9rem;color:var(--text-primary)}
+.at-desc{font-size:.75rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px}
+.at-hint{font-size:.72rem;color:var(--accent);opacity:.8;margin-left:.15rem}
+.wf-step{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem;position:relative;transition:border-color .2s}
+.wf-step:hover{border-color:rgba(255,107,91,.4)}
+.wf-step-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.wf-step-num{background:var(--accent);color:white;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+.wf-step-title{flex:1;font-weight:600;font-size:.9rem}
+.wf-step-actions{display:flex;gap:.35rem}
+.wf-step-actions button{padding:.3rem .55rem;font-size:.75rem}
+.wf-connector{text-align:center;color:var(--text-tertiary);font-size:.8rem;margin:.3rem 0;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.wf-connector::before,.wf-connector::after{content:'';flex:1;height:1px;background:var(--border)}
+.wf-export-area{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'Monaco','Courier New',monospace;font-size:.78rem;color:var(--text-secondary);white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:1rem}
+.wf-empty{text-align:center;padding:3rem;color:var(--text-tertiary);border:2px dashed var(--border);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <img src="images/hero-bg.gif" class="hero-bg" alt="">
+  <div class="hero-content">
+    <a href="http://www.rodeoclip.com" target="_blank">
+      <img src="images/rodeo-header.png" alt="RODEO CLIP - Eye Candy Prompt Machine V1.0">
+    </a>
+  </div>
+</div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('editor',this)"><i class="ti ti-edit"></i> Editor</button>
+    <!-- <button class="tab-btn" onclick="switchTab('multishot',this)"><i class="ti ti-film"></i> Multishot</button>-->
+    <button class="tab-btn" onclick="switchTab('characters',this)"><i class="ti ti-users"></i> Characters</button>
+    <button class="tab-btn" onclick="switchTab('library',this)"><i class="ti ti-photo"></i> Library</button>
+    <button class="tab-btn" onclick="switchTab('smartedit',this)"><i class="ti ti-sparkles"></i> Smart Edit</button>
+    <button class="tab-btn" onclick="switchTab('workflow',this)"><i class="ti ti-sitemap"></i> Workflow Builder</button>
+  </div>
+
+  <!-- EDITOR TAB -->
+  <div id="tab-editor" class="tab-content active">
+    <div class="editor-grid">
+      <div>
+        <div class="card-section">
+          <h2>Prompt Editor</h2>
+          <div class="model-selector">
+            <label class="form-label">AI Model</label>
+            <select id="modelSelector" onchange="updateModelSyntax()">
+              <option value="grok">Grok Imagine</option>
+              <option value="midjourney">Midjourney 8.1</option>
+              <option value="nanoBanana">Nano Banana Pro (Google Gemini 3)</option>
+              <option value="chatgpt2">ChatGPT Images 2.0</option>
+              <option value="kling">Kling 3</option>
+              <option value="seedance">Seedance 2.0</option>
+            </select>
+            <div class="model-info" id="modelInfo"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input type="text" id="subject" placeholder="Main character, object, or scene" value="A woman in a red dress walking through rain">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Action <span class="form-label-sub">— what the subject is doing</span></label>
+            <textarea id="action" placeholder="Movement, gesture, expression, behaviour..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Composition <span class="form-label-sub">— camera angles, size view, framing</span></label>
+            <textarea id="composition" placeholder="Camera angle, framing, depth...">Wide shot, Dutch angle, leading lines converging on subject</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lighting</label>
+            <textarea id="lighting" placeholder="Light quality, color, mood...">Moody amber streetlights, volumetric fog, rim lighting on subject, color grading cool-blue</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lens / Technical</label>
+            <div class="camera-grid" id="techLensGrid" style="margin-bottom:.55rem"></div>
+            <input type="text" id="camera" placeholder="Lens, aperture, depth of field" value="35mm cinematic, f/1.4, shallow depth of field">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cinema Camera <span class="form-label-sub">— Rodeo Clip Cameras</span></label>
+            <div class="camera-grid" id="cameraGrid"></div>
+            <textarea id="cameraBody" class="camera-body-field" placeholder="Select a camera above, or type directly…" oninput="updateFullPrompt()"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cinema Lens <span class="form-label-sub">— Rodeo Clip Lenses</span></label>
+            <div class="lens-grid" id="lensGrid"></div>
+            <textarea id="lensBody" class="lens-body-field" placeholder="Select a lens above, or type directly…" oninput="updateFullPrompt()"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Movie Style <span class="form-label-sub">— sets the Style / References field</span></label>
+            <div class="movie-grid" id="movieGrid"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Additional Style / References</label>
+            <input type="text" id="style" placeholder="Director, film stock, mood..." value="Film noir, hyperrealistic, cinematography by Stanley Kubrick">
+          </div>
+          <div class="button-group">
+            <button onclick="beautifyPrompt()"><i class="ti ti-wand-2"></i> Beautify</button>
+            <button onclick="expandPrompt()"><i class="ti ti-plus"></i> Expand</button>
+            <button onclick="simplifyPrompt()"><i class="ti ti-minus"></i> Simplify</button>
+            <button onclick="rollElements()"><i class="ti ti-dice-5"></i> Roll</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="output-panel">
+          <div class="output-panel-title"><i class="ti ti-terminal-2"></i> Generated Prompt</div>
+          <div class="prompt-output" id="fullPrompt">Fill in the fields...</div>
+          <button class="primary" id="copyBtn" onclick="copyPrompt()" style="width:100%;justify-content:center"><i class="ti ti-copy"></i> Copy to Clipboard</button>
+        </div>
+
+        <h3 onclick="toggleFold(this)">CAMERA ANGLES <span class="fold-arrow">▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ Composition</span></h3><div class="fold-body">
+          <div class="angle-grid" id="angleGrid"></div>
+        </div>
+
+        <h3 onclick="toggleFold(this)">SIZE VIEW <span class="fold-arrow">▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ Composition</span></h3><div class="fold-body">
+          <div class="angle-grid" id="sizeGrid"></div>
+        </div>
+
+        <h3 onclick="toggleFold(this)">FRAMING <span class="fold-arrow">▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ Composition</span></h3><div class="fold-body">
+          <div class="angle-grid" id="framingGrid"></div>
+        </div>
+
+        <h3 onclick="toggleFold(this)">MOVEMENT <span class="fold-arrow">▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ Composition</span></h3><div class="fold-body">
+          <div class="angle-grid" id="movementGrid"></div>
+        </div>
+
+        <h3 onclick="toggleFold(this)">LIGHTING<span class="fold-arrow"> ▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ Lighting</span></h3><div class="fold-body">
+          <div class="btn-grid-2">
+          <button class="preset-btn" onclick="insertPreset('lighting','Golden hour lighting')">Golden hour</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Rembrandt lighting')">Rembrandt</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Neon cyberpunk glow')">Neon glow</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Chiaroscuro dramatic shadows')">Chiaroscuro</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Backlighting rim light')">Backlit rim</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Soft box studio light')">Soft box</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Hard noon sunlight')">Hard noon</button>
+          <button class="preset-btn" onclick="insertPreset('lighting','Underwater caustics light')">Underwater</button>
+          </div>
+        </div>
+
+        <h3 onclick="toggleFold(this)">DIRECTORS<span class="fold-arrow"> ▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ References</span></h3><div class="fold-body">
+          <div class="btn-grid-2">
+          <button class="preset-btn" onclick="insertPreset('style','Stanley Kubrick symmetry and precision')">Kubrick</button>
+          <button class="preset-btn" onclick="insertPreset('style','Tarantino bold framing and dialogue')">Tarantino</button>
+          <button class="preset-btn" onclick="insertPreset('style','Spielberg cinematic wonder')">Spielberg</button>
+          <button class="preset-btn" onclick="insertPreset('style','John Carpenter retro atmosphere')">Carpenter</button>
+          <button class="preset-btn" onclick="insertPreset('style','Dario Argento giallo visual style')">Argento</button>
+          <button class="preset-btn" onclick="insertPreset('style','Wong Kar-wai mood and color')">Wong Kar-wai</button>
+          <button class="preset-btn" onclick="insertPreset('style','Denis Villeneuve epic scale')">Villeneuve</button>
+          <button class="preset-btn" onclick="insertPreset('style','Christopher Nolan IMAX grandeur')">Nolan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTISHOT TAB -->
+  <div id="tab-multishot" class="tab-content">
+    <div class="card-section">
+      <h2>Multishot Storyboard</h2>
+      <div class="button-group">
+        <button class="primary" onclick="addMultiShot()"><i class="ti ti-plus"></i> Add Shot</button>
+        <button onclick="exportStoryboard()"><i class="ti ti-download"></i> Export</button>
+        <button onclick="clearStoryboard()"><i class="ti ti-trash"></i> Clear</button>
+      </div>
+      <div id="timeline" class="timeline"></div>
+      <div id="shotsGrid" class="shot-grid"></div>
+      <div class="info-box"><strong>💡 Tip:</strong> Each shot gets its own model-optimized prompt. Set transitions &amp; durations for smooth sequences.</div>
+    </div>
+  </div>
+
+  <!-- CHARACTERS TAB -->
+  <div id="tab-characters" class="tab-content">
+    <div class="card-section">
+      <h2>Character Studio</h2>
+      <div class="button-group">
+        <button class="primary" onclick="openCharacterModal()" style="width:100%"><i class="ti ti-plus"></i> New Character</button>
+      </div>
+      <div id="charactersList" class="char-grid"></div>
+    </div>
+  </div>
+
+  <!-- LIBRARY TAB -->
+  <div id="tab-library" class="tab-content">
+    <div class="card-section">
+      <h2>Image Library</h2>
+      <div class="button-group">
+        <button class="primary" onclick="openLibraryModal()"><i class="ti ti-plus"></i> Add from URL</button>
+        <button onclick="document.getElementById('folderInput').click()"><i class="ti ti-folder-open"></i> Open Folder</button>
+        <button onclick="exportLibrary()"><i class="ti ti-download"></i> Export</button>
+        <button onclick="clearLibrary()"><i class="ti ti-trash"></i> Clear</button>
+      </div>
+      <input type="file" id="folderInput" webkitdirectory multiple accept="image/*,video/*" style="display:none" onchange="loadFolder(this)">
+      <div id="libraryEmpty" class="empty-state"><i class="ti ti-photo"></i><p>No images yet.</p></div>
+      <div id="libraryGrid" class="library-grid"></div>
+
+      <!-- Folder Browser Section -->
+      <div id="folderSection" class="folder-section" style="display:none">
+        <div class="folder-header">
+          <div class="folder-title"><i class="ti ti-folder"></i> <span id="folderName">Folder</span> <span id="folderCount" style="color:var(--text-muted);font-weight:400"></span></div>
+          <button onclick="closeFolderSection()" style="font-size:.75rem;padding:.25rem .6rem"><i class="ti ti-x"></i> Close</button>
+        </div>
+        <div id="folderGrid" class="folder-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMART EDIT TAB -->
+  <div id="tab-smartedit" class="tab-content">
+    <div class="card-section">
+      <h2>Smart Edit with AI</h2>
+      <div class="form-group">
+        <label class="form-label">Current Prompt</label>
+        <div class="prompt-output" id="smartEditSource" style="margin-bottom:1rem"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Refinement Instruction</label>
+        <textarea id="smartEditInput" placeholder="e.g., Make it more dramatic, add more saturation..."></textarea>
+      </div>
+      <div class="button-group">
+        <button class="primary" onclick="refineWithAI()"><i class="ti ti-sparkles"></i> Refine</button>
+      </div>
+      <div id="smartEditOutput" style="display:none">
+        <label class="form-label" style="margin-top:1.5rem">Refined Prompt</label>
+        <div class="prompt-output" id="refinedPrompt" style="margin-bottom:1rem"></div>
+        <button class="primary" onclick="acceptRefinement()" style="width:100%"><i class="ti ti-check"></i> Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW BUILDER TAB -->
+  <div id="tab-workflow" class="tab-content">
+    <div class="card-section">
+      <h2>Workflow Builder</h2>
+      <p style="color:var(--text-secondary);font-size:.9rem;margin-bottom:1.5rem">Chain multiple AI generation steps into a complete production workflow. Each step can use a different model and prompt strategy.</p>
+      <div class="button-group">
+        <button class="primary" onclick="wfAddStep()"><i class="ti ti-plus"></i> Add Step</button>
+        <button onclick="wfExportText()"><i class="ti ti-file-text"></i> Export Text</button>
+        <button onclick="wfExportJSON()"><i class="ti ti-download"></i> Export JSON</button>
+        <button onclick="wfClear()"><i class="ti ti-trash"></i> Clear</button>
+      </div>
+      <div id="wfStepsList"></div>
+      <div id="wfExportBox" style="display:none">
+        <div class="output-panel-title" style="margin-top:1rem"><i class="ti ti-file-text"></i> Workflow Export</div>
+        <div class="wf-export-area" id="wfExportContent"></div>
+        <button class="primary" onclick="wfCopyExport()" style="margin-top:.75rem;width:100%;justify-content:center"><i class="ti ti-copy"></i> Copy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div id="multishotModal" class="modal" onclick="if(event.target===this)closeMultishotModal()">
+  <div class="modal-content" style="max-width:560px">
+    <h2 class="modal-title">Add Shot</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="form-group">
+        <label class="form-label">Shot Number</label>
+        <input type="text" id="shotNum" placeholder="1, 2A...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Duration (s)</label>
+        <input type="number" id="shotDuration" min="1" value="5">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        AI Model
+        <span id="msSyntaxTag" class="ms-syntax-tag"></span>
+      </label>
+      <select id="shotModel" onchange="updateMsSyntaxTag()">
+        <option value="seedance">Seedance 2.0</option>
+        <option value="kling">Kling 3</option>
+        <option value="grok">Grok Imagine</option>
+        <option value="midjourney">Midjourney 8.1</option>
+        <option value="nanoBanana">Nano Banana Pro</option>
+        <option value="chatgpt2">ChatGPT Images 2.0</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Subject / Action</label>
+      <input type="text" id="shotSubject" placeholder="What happens in this shot">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Composition / Camera</label>
+      <textarea id="shotComposition" placeholder="Camera angle, movement, framing..." style="min-height:56px"></textarea>
+    </div>
+
+    <!-- Character picker -->
+    <div class="form-group">
+      <label class="form-label">Character <span style="color:var(--text-muted);font-weight:400;font-size:.72rem">— from Character Studio</span></label>
+      <div id="msCharPicker" class="ms-picker-grid"><p style="color:var(--text-muted);font-size:.78rem;grid-column:1/-1">No characters saved yet.</p></div>
+      <input type="hidden" id="shotCharRef">
+    </div>
+
+    <!-- Library image picker -->
+    <div class="form-group">
+      <label class="form-label">Background / Reference Image <span style="color:var(--text-muted);font-weight:400;font-size:.72rem">— from Library</span></label>
+      <div id="msLibPicker" class="ms-picker-grid"><p style="color:var(--text-muted);font-size:.78rem;grid-column:1/-1">No library images yet.</p></div>
+      <input type="hidden" id="shotBgRef">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Transition to next shot</label>
+      <select id="shotTransition">
+        <option>cut</option><option>fade</option><option>dissolve</option><option>wipe</option><option>match cut</option>
+      </select>
+    </div>
+
+    <div class="modal-buttons">
+      <button onclick="closeMultishotModal()">Cancel</button>
+      <button class="primary" onclick="saveMultiShot()">Add Shot</button>
+    </div>
+  </div>
+</div>
+<div id="characterModal" class="modal" onclick="if(event.target===this)closeCharacterModal()">
+  <div class="modal-content">
+    <h2 class="modal-title" id="charModalTitle">Create Character</h2>
+    <div class="form-group"><label class="form-label">Name</label><input type="text" id="charName" placeholder="Elena"></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea id="charDescription" placeholder="Physical appearance, style, key traits..."></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Portrait Image</label>
+      <div class="char-upload-area" onclick="document.getElementById('charFileInput').click()">
+        <i class="ti ti-upload" style="font-size:1.4rem;display:block;margin-bottom:.3rem"></i>
+        <span style="font-size:.8rem;color:var(--text-secondary)">Click to upload a photo</span>
+        <img id="charImgPreview" class="char-img-preview" alt="">
+      </div>
+      <input type="file" id="charFileInput" accept="image/*" style="display:none" onchange="charLoadFile(this)">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:.72rem;color:var(--text-tertiary)">or paste URL</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+      <input type="text" id="charImageUrl" placeholder="https://..." oninput="charPreviewUrl(this.value)">
+    </div>
+    <div class="modal-buttons"><button onclick="closeCharacterModal()">Cancel</button><button class="primary" onclick="saveCharacter()">Save Character</button></div>
+  </div>
+</div>
+<div id="libraryModal" class="modal" onclick="if(event.target===this)closeLibraryModal()">
+  <div class="modal-content">
+    <h2 class="modal-title">Add to Library</h2>
+    <div class="form-group"><label class="form-label">Image URL</label><input type="text" id="libraryUrl" placeholder="https://..."></div>
+    <div class="form-group"><label class="form-label">Prompt (optional)</label><textarea id="libraryPrompt" placeholder="Paste the prompt..."></textarea></div>
+    <div class="modal-buttons"><button onclick="closeLibraryModal()">Cancel</button><button class="primary" onclick="addToLibrary()">Add</button></div>
+  </div>
+</div>
+<div id="wfStepModal" class="modal" onclick="if(event.target===this)closeWfModal()">
+  <div class="modal-content">
+    <h2 class="modal-title" id="wfModalTitle">Add Workflow Step</h2>
+    <div class="form-group"><label class="form-label">Step Name</label><input type="text" id="wfStepName" placeholder="e.g., Hero shot, Establishing, Close-up..."></div>
+    <div class="form-group"><label class="form-label">AI Model</label>
+      <select id="wfStepModel"><option value="grok">Grok Imagine</option><option value="midjourney">Midjourney 8.1</option><option value="nanoBanana">Nano Banana Pro</option><option value="chatgpt2">ChatGPT Images 2.0</option><option value="kling">Kling 3</option><option value="seedance">Seedance 2.0</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Prompt</label><textarea id="wfStepPrompt" placeholder="Full prompt for this step..." style="min-height:120px"></textarea></div>
+    <div class="form-group">
+  <label class="form-label">Reference Image URL <span class="form-label-sub">(optional)</span></label>
+  <input type="text" id="wfStepRef" placeholder="https://..." oninput="wfRefPreview(this.value)">
+  <img id="wfRefPreviewImg" src="" alt="preview" onerror="this.style.display='none'" style="display:none;width:100%;max-height:130px;object-fit:cover;border-radius:6px;margin-top:.5rem;border:1px solid var(--border)">
+  <label class="form-label" style="margin-top:.75rem">Or pick from Library <span style="color:var(--text-muted);font-weight:400;font-size:.72rem">— click to select</span></label>
+  <div id="wfLibPicker" class="ms-picker-grid"></div>
+</div>
+    <div class="form-group"><label class="form-label">Duration (s)</label><input type="number" id="wfStepDuration" min="1" value="5"></div>
+    <div class="form-group"><label class="form-label">Transition to next</label>
+      <select id="wfStepTransition"><option value="cut">Cut</option><option value="fade">Fade</option><option value="dissolve">Dissolve</option><option value="wipe">Wipe</option><option value="match-cut">Match Cut</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Notes <span class="form-label-sub">(optional)</span></label><textarea id="wfStepNotes" placeholder="Production notes, character refs..." style="min-height:60px"></textarea></div>
+    <div class="modal-buttons"><button onclick="closeWfModal()">Cancel</button><button class="primary" id="wfSaveBtn" onclick="wfSaveStep()">Add Step</button></div>
+  </div>
+</div>
+
+<script>
+// Parallax hero background
+window.addEventListener('scroll', function() {
+  const heroBg = document.querySelector('.hero-bg');
+  if (heroBg) {
+    heroBg.style.transform = 'translateY(' + (window.scrollY * 0.35) + 'px)';
+  }
+});
+
+(function () {
+  const hero = document.querySelector('.hero');
+  const heroH = hero.offsetHeight;
+
+  window.addEventListener('scroll', () => {
+    const scrolled = Math.min(window.scrollY / heroH, 1); // 0 → 1
+    const top = 0.10 + (1 - 0.10) * scrolled; // 0.10 → 1
+    const bot = 0.30 + (1 - 0.30) * scrolled; // 0.30 → 1
+    hero.style.setProperty('--hero-overlay-top', top.toFixed(3));
+    hero.style.setProperty('--hero-overlay-bot', bot.toFixed(3));
+  }, { passive: true });
+})();
+const CAMERAS = [
+  {name:"ARRI ALEXA 35",desc:"Cinema gold standard",prompt:"Shot on ARRI ALEXA 35, rich color science, exceptional dynamic range"},
+  {name:"Sony VENICE 2",desc:"Hollywood favorite",prompt:"Shot on Sony VENICE 2, soft highlights, dual native ISO 800/3200"},
+  {name:"RED V-RAPTOR 8K",desc:"High-res digital cinema",prompt:"Shot on RED V-RAPTOR 8K, ultra-sharp clinical detail, 8K resolution"},
+  {name:"Blackmagic URSA Mini Pro 12K",desc:"Indie cinema",prompt:"Shot on Blackmagic URSA Mini Pro 12K, film-like latitude"},
+  {name:"Canon EOS C300 Mark III",desc:"Documentary",prompt:"Shot on Canon EOS C300 III, natural skin tones, dual-gain output"},
+  {name:"Panavision DXL2",desc:"Anamorphic cinema",prompt:"Shot on Panavision DXL2, oval bokeh, anamorphic lens flares"},
+  {name:"Sony FX9",desc:"Cinematic run-and-gun",prompt:"Shot on Sony FX9, full-frame cinema look, S-Cinetone color"},
+  {name:"Leica M11",desc:"Photographic cinema",prompt:"Shot on Leica M11, intimate journalistic aesthetic, classic optics"},
+  {name:"DJI Inspire 3 (Zenmuse X9)",desc:"Aerial cinema",prompt:"Shot on DJI Inspire 3 with Zenmuse X9-8K, aerial cinematography"},
+  {name:"GoPro Hero 11 Black",desc:"Action & POV",prompt:"Shot on GoPro Hero 11 Black, wide-angle action POV, 5.3K"}
+];
+const TECH_LENSES = [
+  {name:"14mm",    desc:"Ultra-wide, f/2.8, distorted FOV",        prompt:"14mm ultra-wide angle lens, f/2.8, extreme field of view, slight barrel distortion"},
+  {name:"24mm",    desc:"Wide, f/1.4, environmental depth",         prompt:"24mm wide-angle lens, f/1.4, environmental perspective, deep field"},
+  {name:"35mm",    desc:"Cinematic standard, f/1.4",                prompt:"35mm cinematic lens, f/1.4, shallow depth of field, natural perspective"},
+  {name:"50mm",    desc:"Normal, f/1.2, true-to-eye",               prompt:"50mm normal lens, f/1.2, natural human perspective, subtle bokeh"},
+  {name:"85mm",    desc:"Portrait, f/1.4, flattering compression",  prompt:"85mm portrait lens, f/1.4, beautiful compression, creamy bokeh"},
+  {name:"135mm",   desc:"Tele, f/2, subject isolation",             prompt:"135mm telephoto lens, f/2, compressed perspective, strong subject isolation"},
+  {name:"200mm",   desc:"Long tele, f/2.8, background blur",        prompt:"200mm telephoto lens, f/2.8, heavy background compression, tight framing"},
+  {name:"Anamorphic", desc:"2.39:1, oval bokeh, lens flares",       prompt:"anamorphic lens, 2.39:1 aspect ratio, oval bokeh, characteristic horizontal lens flares"},
+  {name:"Fish-eye", desc:"8mm, full-frame distortion",              prompt:"8mm fisheye lens, full-frame fisheye distortion, 180-degree field of view"},
+  {name:"Macro",   desc:"1:1 magnification, extreme detail",        prompt:"macro lens 1:1 magnification, extreme close-up, razor-sharp micro detail, compressed background"},
+  {name:"Tilt-Shift", desc:"24mm TS, depth plane control",          prompt:"24mm tilt-shift lens, selective focus plane, architectural perspective control, miniature effect"},
+  {name:"Super 8", desc:"Vintage 8mm film, warm grain",             prompt:"Super 8mm film lens, vintage grain, warm color shift, soft vignette, retro film look"},
+];
+const LENSES = [
+  {name:"Lensbaby",      key:"lensbaby",  type:"Creative",    prompt:"Lensbaby selective focus lens, swirly bokeh, artistic tilt-shift blur, soft dreamy edges, off-center focus plane"},
+  {name:"Hawk V-Lite",   key:"hawk",      type:"Anamorphic",  prompt:"Hawk V-Lite anamorphic lens, oval bokeh, horizontal blue streak flares, cinematic widescreen anamorphic look"},
+  {name:"Laowa Macro",   key:"laowa",     type:"Macro",       prompt:"Laowa macro lens, extreme close-up detail, razor-sharp focus, magnified subject, compressed background"},
+  {name:"Canon K-35",    key:"canonk35",  type:"Vintage",     prompt:"Canon K-35 vintage prime lens, warm golden rendering, classic Hollywood look, gentle lens aberrations, organic character"},
+  {name:"Panavision C",  key:"panavision",type:"Anamorphic",  prompt:"Panavision C-Series anamorphic lens, blue horizontal streak flares, oval bokeh, epic cinematic scope"},
+  {name:"ARRI Sig. Prime",key:"arri",     type:"Modern",      prompt:"ARRI Signature Prime lens, clean modern rendering, creamy smooth bokeh, clinical sharpness, full-frame cinematic"},
+  {name:"Cooke S4",      key:"cooke",     type:"Classic",     prompt:"Cooke S4 prime lens, warm organic Cooke Look, smooth natural skin tones, characteristic focus roll-off, beloved cinematographer's lens"},
+  {name:"Petzval",       key:"petzval",   type:"Artistic",    prompt:"Petzval lens, iconic swirly vortex bokeh, strong central sharpness with painterly swirling edges, romantic artistic portrait"},
+  {name:"Soviet Vintage",key:"soviet",    type:"Vintage",     prompt:"Soviet vintage lens, lo-fi organic rendering, soft vignette, slight aberrations, authentic vintage film aesthetic"},
+  {name:"JDC Xtal Xpress",key:"jdc",     type:"Anamorphic",  prompt:"JDC Xtal Xpress anamorphic lens, diagonal crystal streak flares, sharp center, cinematic widescreen character"},
+  {name:"Zeiss Ultra Prime",key:"zeiss",  type:"Modern",      prompt:"Zeiss Ultra Prime lens, ultra-sharp clinical precision, geometric star catchlights, zero distortion, hyper-detailed modern cinema"}
+];
+
+const LENS_SVGS = {'lensbaby': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="28" r="6" fill="#ff6b5b"/><circle cx="40" cy="28" r="12" fill="none" stroke="#ff6b5b" stroke-width="1.5" opacity=".6"/><path d="M40,28 L54.0,28.0" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L52.1,35.0" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L47.1,40.1" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L40.2,42.0" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L33.2,40.2" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L28.0,35.2" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L26.0,28.3" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L27.7,21.3" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L32.7,16.1" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L39.5,14.0" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L46.6,15.6" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><path d="M40,28 L51.8,20.5" stroke="#e8eaf6" stroke-width=".8" opacity=".3"/><circle cx="32" cy="23" r="9" fill="none" stroke="#ff6b5b" stroke-width=".7" opacity=".4" stroke-dasharray="2 2"/><text x="40" y="52" text-anchor="middle" font-size="7" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Lensbaby</text></svg>', 'hawk': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><ellipse cx="40" cy="28" rx="5" ry="9" fill="#e8eaf6" opacity=".9"/><line x1="0" y1="25" x2="80" y2="25" stroke="#4fc3f7" stroke-width="0.8999999999999999" opacity="0.52"/><line x1="0" y1="26.5" x2="80" y2="26.5" stroke="#4fc3f7" stroke-width="1.2" opacity="0.61"/><line x1="0" y1="28" x2="80" y2="28" stroke="#4fc3f7" stroke-width="1.5" opacity="0.7"/><line x1="0" y1="29.5" x2="80" y2="29.5" stroke="#4fc3f7" stroke-width="1.2" opacity="0.61"/><line x1="0" y1="31" x2="80" y2="31" stroke="#4fc3f7" stroke-width="0.8999999999999999" opacity="0.52"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Hawk V-Lite</text></svg>', 'laowa': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="28" r="3" fill="none" stroke="#ff6b5b" stroke-width="1.2799999999999998" opacity="0.7100000000000001"/><circle cx="40" cy="28" r="6" fill="none" stroke="#ff6b5b" stroke-width="1.16" opacity="0.6200000000000001"/><circle cx="40" cy="28" r="9" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.53"/><circle cx="40" cy="28" r="13" fill="none" stroke="#ff6b5b" stroke-width="0.8799999999999999" opacity="0.41000000000000003"/><circle cx="40" cy="28" r="17" fill="none" stroke="#ff6b5b" stroke-width="0.7199999999999999" opacity="0.29000000000000004"/><circle cx="40" cy="28" r="21" fill="none" stroke="#ff6b5b" stroke-width="0.5599999999999999" opacity="0.17000000000000004"/><circle cx="40" cy="28" r="25" fill="none" stroke="#ff6b5b" stroke-width="0.3999999999999999" opacity="0.050000000000000044"/><circle cx="40" cy="28" r="2.5" fill="#ff6b5b"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Laowa Macro</text></svg>', 'canonk35': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="25" r="20" fill="#ffd54f" opacity=".12"/><circle cx="40" cy="25" r="13" fill="#ffd54f" opacity=".15"/><circle cx="40" cy="25" r="7" fill="#ffd54f" opacity=".35"/><circle cx="40" cy="25" r="3" fill="#ffd54f" opacity=".9"/><line x1="40" y1="25" x2="58.0" y2="25.0" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="52.7" y2="37.7" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="40.0" y2="43.0" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="27.3" y2="37.7" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="22.0" y2="25.0" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="27.3" y2="12.3" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="40.0" y2="7.0" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><line x1="40" y1="25" x2="52.7" y2="12.3" stroke="#ffd54f" stroke-width=".6" opacity=".2"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Canon K-35</text></svg>', 'panavision': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><ellipse cx="40" cy="26" rx="4" ry="8" fill="#e8eaf6" opacity=".85"/><line x1="0" y1="22" x2="80" y2="22" stroke="#4fc3f7" stroke-width="1.4" opacity="0.47"/><line x1="0" y1="24" x2="80" y2="24" stroke="#4fc3f7" stroke-width="1.7" opacity="0.61"/><line x1="0" y1="26" x2="80" y2="26" stroke="#4fc3f7" stroke-width="2.0" opacity="0.75"/><line x1="0" y1="28" x2="80" y2="28" stroke="#4fc3f7" stroke-width="1.7" opacity="0.61"/><line x1="0" y1="30" x2="80" y2="30" stroke="#4fc3f7" stroke-width="1.4" opacity="0.47"/><rect x="0" y="25" width="80" height="2" fill="#4fc3f7" opacity=".35"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Panavision C</text></svg>', 'arri': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="26" r="16" fill="none" stroke="#e8eaf6" stroke-width="1" opacity=".4"/><circle cx="40" cy="26" r="9" fill="none" stroke="#e8eaf6" stroke-width="1.2" opacity=".6"/><circle cx="40" cy="26" r="3" fill="#e8eaf6" opacity=".9"/><line x1="18" y1="26" x2="62" y2="26" stroke="#e8eaf6" stroke-width=".8" opacity=".5"/><line x1="40" y1="8" x2="40" y2="44" stroke="#e8eaf6" stroke-width=".8" opacity=".5"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">ARRI Sig. Prime</text></svg>', 'cooke': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="26" r="6" fill="#ffd54f" opacity=".8"/><circle cx="26" cy="31" r="4" fill="#ffd54f" opacity=".35"/><circle cx="54" cy="31" r="5" fill="#ffd54f" opacity=".3"/><circle cx="33" cy="17" r="3.5" fill="#ffd54f" opacity=".25"/><circle cx="49" cy="18" r="4" fill="#ffd54f" opacity=".2"/><circle cx="40" cy="26" r="6" fill="none" stroke="#ffd54f" stroke-width="1" opacity=".6"/><text x="40" y="52" text-anchor="middle" font-size="7" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Cooke S4</text></svg>', 'petzval': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="26" r="5" fill="#ff6b5b" opacity=".9"/><path d="M40,26 Q46.1,31.2 41.4,33.9" fill="none" stroke="#ff6b5b" stroke-width="1.2" opacity="0.6"/><path d="M40,26 Q38.6,33.9 33.9,31.1" fill="none" stroke="#ff6b5b" stroke-width="1.2" opacity="0.6"/><path d="M40,26 Q32.5,28.7 32.5,23.2" fill="none" stroke="#ff6b5b" stroke-width="1.2" opacity="0.6"/><path d="M40,26 Q33.9,20.8 38.6,18.1" fill="none" stroke="#ff6b5b" stroke-width="1.2" opacity="0.6"/><path d="M40,26 Q41.4,18.1 46.1,20.9" fill="none" stroke="#ff6b5b" stroke-width="1.2" opacity="0.6"/><path d="M40,26 Q47.5,23.3 47.5,28.8" fill="none" stroke="#ff6b5b" stroke-width="1.2" opacity="0.6"/><path d="M40,26 Q49.2,33.7 42.0,37.8" fill="none" stroke="#ff6b5b" stroke-width="1.1199999999999999" opacity="0.5599999999999999"/><path d="M40,26 Q37.9,37.8 30.8,33.7" fill="none" stroke="#ff6b5b" stroke-width="1.1199999999999999" opacity="0.5599999999999999"/><path d="M40,26 Q28.7,30.1 28.7,21.9" fill="none" stroke="#ff6b5b" stroke-width="1.1199999999999999" opacity="0.5599999999999999"/><path d="M40,26 Q30.8,18.3 38.0,14.2" fill="none" stroke="#ff6b5b" stroke-width="1.1199999999999999" opacity="0.5599999999999999"/><path d="M40,26 Q42.1,14.2 49.2,18.3" fill="none" stroke="#ff6b5b" stroke-width="1.1199999999999999" opacity="0.5599999999999999"/><path d="M40,26 Q51.3,21.9 51.3,30.1" fill="none" stroke="#ff6b5b" stroke-width="1.1199999999999999" opacity="0.5599999999999999"/><path d="M40,26 Q52.2,36.3 42.7,41.8" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.52"/><path d="M40,26 Q37.2,41.8 27.7,36.2" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.52"/><path d="M40,26 Q25.0,31.4 25.0,20.5" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.52"/><path d="M40,26 Q27.8,15.7 37.3,10.2" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.52"/><path d="M40,26 Q42.8,10.2 52.3,15.8" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.52"/><path d="M40,26 Q55.0,20.6 55.0,31.5" fill="none" stroke="#ff6b5b" stroke-width="1.04" opacity="0.52"/><path d="M40,26 Q55.3,38.9 43.4,45.7" fill="none" stroke="#ff6b5b" stroke-width="0.96" opacity="0.48"/><path d="M40,26 Q36.5,45.7 24.6,38.8" fill="none" stroke="#ff6b5b" stroke-width="0.96" opacity="0.48"/><path d="M40,26 Q21.2,32.8 21.2,19.1" fill="none" stroke="#ff6b5b" stroke-width="0.96" opacity="0.48"/><path d="M40,26 Q24.7,13.1 36.6,6.3" fill="none" stroke="#ff6b5b" stroke-width="0.96" opacity="0.48"/><path d="M40,26 Q43.5,6.3 55.4,13.2" fill="none" stroke="#ff6b5b" stroke-width="0.96" opacity="0.48"/><path d="M40,26 Q58.8,19.2 58.8,32.9" fill="none" stroke="#ff6b5b" stroke-width="0.96" opacity="0.48"/><text x="40" y="52" text-anchor="middle" font-size="7" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Petzval</text></svg>', 'soviet': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="26" r="18" fill="#e8eaf6" opacity=".06"/><circle cx="40" cy="26" r="10" fill="#e8eaf6" opacity=".1"/><line x1="19" y1="0" x2="8" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.15"/><line x1="36" y1="0" x2="33" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.07"/><line x1="18" y1="0" x2="74" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.06"/><line x1="59" y1="0" x2="9" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.05"/><line x1="32" y1="0" x2="34" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.12"/><line x1="8" y1="0" x2="30" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.14"/><line x1="74" y1="0" x2="58" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.08"/><line x1="40" y1="0" x2="5" y2="46" stroke="#e8eaf6" stroke-width=".4" opacity="0.15"/><circle cx="23" cy="30" r="0.8" fill="#e8eaf6" opacity="0.14"/><circle cx="46" cy="9" r="0.6" fill="#e8eaf6" opacity="0.12"/><circle cx="47" cy="41" r="0.8" fill="#e8eaf6" opacity="0.11"/><circle cx="61" cy="37" r="0.6" fill="#e8eaf6" opacity="0.33"/><circle cx="13" cy="38" r="0.8" fill="#e8eaf6" opacity="0.26"/><circle cx="49" cy="39" r="0.7" fill="#e8eaf6" opacity="0.12"/><circle cx="32" cy="21" r="1.5" fill="#e8eaf6" opacity="0.31"/><circle cx="15" cy="27" r="0.8" fill="#e8eaf6" opacity="0.26"/><circle cx="49" cy="13" r="0.9" fill="#e8eaf6" opacity="0.15"/><circle cx="37" cy="7" r="1.1" fill="#e8eaf6" opacity="0.14"/><circle cx="34" cy="13" r="1.0" fill="#e8eaf6" opacity="0.17"/><circle cx="74" cy="17" r="1.2" fill="#e8eaf6" opacity="0.31"/><circle cx="10" cy="17" r="1.3" fill="#e8eaf6" opacity="0.30"/><circle cx="54" cy="20" r="0.6" fill="#e8eaf6" opacity="0.33"/><circle cx="75" cy="23" r="0.7" fill="#e8eaf6" opacity="0.22"/><circle cx="61" cy="12" r="0.8" fill="#e8eaf6" opacity="0.16"/><circle cx="74" cy="37" r="0.8" fill="#e8eaf6" opacity="0.25"/><circle cx="77" cy="28" r="0.9" fill="#e8eaf6" opacity="0.35"/><circle cx="20" cy="35" r="1.0" fill="#e8eaf6" opacity="0.29"/><circle cx="17" cy="12" r="1.1" fill="#e8eaf6" opacity="0.30"/><circle cx="40" cy="26" r="4" fill="#e8eaf6" opacity=".7"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Soviet Vintage</text></svg>', 'jdc': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="26" r="5" fill="#e8eaf6" opacity=".95"/><line x1="14.2" y1="15.1" x2="65.8" y2="36.9" stroke="#e8eaf6" stroke-width="1.2" opacity="0.60"/><line x1="65.8" y1="36.9" x2="14.2" y2="15.1" stroke="#e8eaf6" stroke-width="1.2" opacity="0.60"/><line x1="59.9" y1="16.6" x2="20.1" y2="35.4" stroke="#e8eaf6" stroke-width="0.8" opacity="0.40"/><line x1="20.1" y1="35.4" x2="59.9" y2="16.6" stroke="#e8eaf6" stroke-width="0.8" opacity="0.40"/><line x1="20.0" y1="26.0" x2="60.0" y2="26.0" stroke="#e8eaf6" stroke-width="0.5" opacity="0.25"/><line x1="40.0" y1="10.0" x2="40.0" y2="42.0" stroke="#e8eaf6" stroke-width="0.5" opacity="0.20"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">JDC Xtal Xpress</text></svg>', 'zeiss': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 56" width="80" height="56"><rect width="80" height="56" fill="#0f1520"/><circle cx="40" cy="26" r="15" fill="none" stroke="#e8eaf6" stroke-width=".7" opacity=".35"/><circle cx="40" cy="26" r="7" fill="none" stroke="#e8eaf6" stroke-width="1" opacity=".55"/><circle cx="40" cy="26" r="3" fill="#e8eaf6" opacity=".95"/><line x1="40" y1="26" x2="62.0" y2="26.0" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="60.3" y2="34.4" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="55.6" y2="41.6" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="48.4" y2="46.3" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="40.0" y2="48.0" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="31.6" y2="46.3" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="24.4" y2="41.6" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="19.7" y2="34.4" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="18.0" y2="26.0" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="19.7" y2="17.6" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="24.4" y2="10.4" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="31.6" y2="5.7" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="40.0" y2="4.0" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="48.4" y2="5.7" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><line x1="40" y1="26" x2="55.6" y2="10.4" stroke="#e8eaf6" stroke-width="1.2" opacity="0.55"/><line x1="40" y1="26" x2="60.3" y2="17.6" stroke="#e8eaf6" stroke-width="0.5" opacity="0.3"/><text x="40" y="52" text-anchor="middle" font-size="6.5" fill="#e8eaf6" opacity=".7" font-family="sans-serif">Zeiss Ultra Prime</text></svg>'};
+
+const MOVIE_STYLES = [
+  {name:"Sci-Fi",icon:"🚀",prompt:"futuristic sci-fi, advanced technology, sterile environments, blue-white hard lighting, holographic interfaces, space-age design"},
+  {name:"80s Sci-Fi",icon:"🤖",prompt:"retro-futuristic 1980s sci-fi, CRT monitors, neon synthwave colors, laser grids, analog computers, chrome surfaces, John Carpenter aesthetic"},
+  {name:"80s Horror",icon:"🔪",prompt:"1980s practical effects horror, heavy film grain, deep shadows, slasher aesthetic, VHS texture, fog machine atmosphere, Carpenter-Craven style"},
+  {name:"Giallo",icon:"🔮",prompt:"Italian giallo cinema, hyper-vivid saturated colors, black leather gloves, baroque operatic drama, Dario Argento color palette, deep reds and toxic greens"},
+  {name:"US Action",icon:"💥",prompt:"Hollywood blockbuster action, explosive practical effects, American heroism, high-contrast cinematography, lens flares, Michael Bay Dutch angles"},
+  {name:"French Drama",icon:"🎭",prompt:"French New Wave cinema, intimate naturalistic lighting, handheld documentary feel, philosophical depth, Godard-Truffaut aesthetic, desaturated palette"},
+  {name:"80s US TV",icon:"📺",prompt:"1980s American television, soft multi-camera studio lighting, warm saturated colors, soap opera gloss, Dynasty-Dallas aesthetic, Kodak reversal stock look"},
+  {name:"Heroic Fantasy",icon:"⚔️",prompt:"epic heroic fantasy, sweeping mountain landscapes, medieval grandeur, magical golden light, dramatic god-rays, Peter Jackson cinematic scale"}
+];
+const CAMERA_ANGLES = [
+  {name:"Eye Level",prompt:"eye level shot, camera at subject's eye height",key:"eye-level"},
+  {name:"Low Angle",prompt:"low angle shot, camera below subject looking up, heroic perspective",key:"low-angle"},
+  {name:"High Angle",prompt:"high angle shot, camera above subject looking down, diminishing perspective",key:"high-angle"},
+  {name:"Bird's Eye",prompt:"bird's eye view, overhead top-down shot, directly above subject",key:"birds-eye"},
+  {name:"Worm's Eye",prompt:"worm's eye view, extreme low angle looking straight up",key:"worms-eye"},
+  {name:"Dutch Tilt",prompt:"Dutch tilt angle, camera tilted 30-45 degrees, psychological unease",key:"dutch-tilt"},
+  {name:"Over Shoulder",prompt:"over the shoulder shot, looking over character's shoulder at subject",key:"over-shoulder"},
+  {name:"POV",prompt:"first-person POV shot, subjective camera from character's eyes",key:"pov"},
+  {name:"Extreme CU",prompt:"extreme close-up macro shot, intimate detail, texture visible",key:"extreme-cu"},
+  {name:"Close-Up",prompt:"close-up shot, face filling the frame, emotional intimacy",key:"close-up"},
+  {name:"Med. Close-Up",prompt:"medium close-up shot, head and chest visible",key:"medium-cu"},
+  {name:"Medium Shot",prompt:"medium shot, subject from waist up, conversational framing",key:"medium-shot"},
+  {name:"Full Shot",prompt:"full shot, entire body visible, head to toe",key:"full-shot"},
+  {name:"Wide Shot",prompt:"wide shot, subject visible in their environment",key:"wide-shot"},
+  {name:"Extreme Wide",prompt:"extreme wide establishing shot, vast environment dwarfs subject",key:"extreme-wide"},
+  {name:"Aerial",prompt:"aerial drone shot, high-altitude top-down view",key:"aerial"},
+  {name:"Two Shot",prompt:"two shot, two subjects in frame together",key:"two-shot"},
+  {name:"Tracking",prompt:"tracking shot, camera follows moving subject on dolly/steadicam",key:"tracking"},
+  {name:"Dolly In",prompt:"dolly in shot, camera moves toward subject on track",key:"dolly-in"}
+];
+const SIZE_VIEWS = [
+  {name:"Extreme CU",key:"ecu",prompt:"extreme close-up, filling the frame with face or intimate detail"},
+  {name:"Close-Up",key:"cu",prompt:"close-up shot, head and face filling the frame"},
+  {name:"Med. Close-Up",key:"mcu",prompt:"medium close-up shot, head and shoulders visible"},
+  {name:"Medium Shot",key:"ms",prompt:"medium shot, subject from waist up"},
+  {name:"Med. Full",key:"mfs",prompt:"medium full shot, subject from knees up"},
+  {name:"Full Shot",key:"fs",prompt:"full shot, entire body visible head to toe"},
+  {name:"Wide Shot",key:"ws",prompt:"wide shot, subject and environment visible"},
+  {name:"Extreme Wide",key:"ews",prompt:"extreme wide establishing shot, tiny subject, vast environment"},
+  {name:"Insert Shot",key:"insert",prompt:"insert shot, extreme close-up of specific prop or detail"},
+  {name:"Cutaway",key:"cutaway",prompt:"cutaway shot, reaction or environmental detail cut"}
+];
+const FRAMING_VIEWS = [
+  {name:"Center Frame",key:"center",prompt:"centered composition, subject in exact center of frame"},
+  {name:"Rule of Thirds",key:"thirds",prompt:"rule of thirds composition, subject on third-line intersection"},
+  {name:"Golden Ratio",key:"golden",prompt:"golden ratio composition, Fibonacci spiral framing"},
+  {name:"Leading Lines",key:"lines",prompt:"leading lines composition, converging lines guide eye to subject"},
+  {name:"Symmetrical",key:"symmetry",prompt:"symmetrical composition, perfect bilateral symmetry"},
+  {name:"Diagonal",key:"diagonal",prompt:"diagonal composition, strong diagonal lines across frame"},
+  {name:"Negative Space",key:"negative",prompt:"negative space composition, subject isolated with intentional empty space"},
+  {name:"Frame in Frame",key:"frame",prompt:"frame within frame composition, archway or window frames subject"},
+  {name:"Foreground",key:"foreground",prompt:"foreground interest composition, layered depth near and far elements"},
+  {name:"S-Curve",key:"scurve",prompt:"S-curve composition, sinuous curved line leading through frame"}
+];
+const MOVEMENTS = [
+  {name:"Static",key:"static",prompt:"static camera, locked-off tripod shot, no movement"},
+  {name:"Pan Left",key:"pan-left",prompt:"pan left, horizontal camera sweep from right to left"},
+  {name:"Pan Right",key:"pan-right",prompt:"pan right, horizontal camera sweep from left to right"},
+  {name:"Tilt Up",key:"tilt-up",prompt:"tilt up, vertical camera pivot upward, revealing height"},
+  {name:"Tilt Down",key:"tilt-down",prompt:"tilt down, vertical camera pivot downward"},
+  {name:"Dolly In",key:"dolly-in",prompt:"dolly in, camera physically moves toward subject on track"},
+  {name:"Dolly Out",key:"dolly-out",prompt:"dolly out, camera physically pulls back away from subject"},
+  {name:"Truck Left",key:"truck-left",prompt:"truck left, camera moves laterally to the left"},
+  {name:"Truck Right",key:"truck-right",prompt:"truck right, camera moves laterally to the right"},
+  {name:"Handheld",key:"handheld",prompt:"handheld camera, organic shaky movement, documentary feel"},
+  {name:"Steadicam",key:"steadicam",prompt:"Steadicam tracking shot, smooth floating movement"},
+  {name:"Crane Up",key:"crane-up",prompt:"crane up, camera rises on crane arm revealing environment"},
+  {name:"Zoom In",key:"zoom-in",prompt:"zoom in, lens zoom toward subject, compressing space"},
+  {name:"360° Orbit",key:"orbit",prompt:"360 degree orbit, camera circles completely around subject"},
+  {name:"Whip Pan",key:"whip-pan",prompt:"whip pan, extremely fast horizontal pan creating blur transition"}
+];
+const ANGLE_SVGS = {};
+const SIZE_VIEW_SVGS = {"ecu":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"10\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"15\" x2=\"40\" y2=\"33\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"33\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"47\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"35\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"45\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"4\" width=\"64\" height=\"12\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"2\" y1=\"16\" x2=\"78\" y2=\"16\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">EXTREME CU</text></svg>","cu":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"10\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"15\" x2=\"40\" y2=\"33\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"33\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"47\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"35\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"45\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"4\" width=\"64\" height=\"17\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"2\" y1=\"21\" x2=\"78\" y2=\"21\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">CLOSE-UP</text></svg>","mcu":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"10\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"15\" x2=\"40\" y2=\"33\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"33\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"47\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"35\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"45\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"4\" width=\"64\" height=\"23\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"2\" y1=\"27\" x2=\"78\" y2=\"27\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">MED. CLOSE-UP</text></svg>","ms":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"10\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"15\" x2=\"40\" y2=\"33\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"33\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"47\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"35\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"45\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"4\" width=\"64\" height=\"29\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"2\" y1=\"33\" x2=\"78\" y2=\"33\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">MEDIUM SHOT</text></svg>","mfs":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"10\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"15\" x2=\"40\" y2=\"33\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"33\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"47\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"35\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"45\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"4\" width=\"64\" height=\"34\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"2\" y1=\"38\" x2=\"78\" y2=\"38\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">MED. FULL</text></svg>","fs":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"10\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"15\" x2=\"40\" y2=\"33\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"33\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"21\" x2=\"47\" y2=\"28\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"35\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"33\" x2=\"45\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"6\" y=\"4\" width=\"68\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">FULL SHOT</text></svg>","ws":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"28\" r=\"3\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"31\" x2=\"40\" y2=\"40\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"34\" x2=\"37\" y2=\"38\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"34\" x2=\"43\" y2=\"38\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"40\" x2=\"38\" y2=\"46\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"40\" x2=\"42\" y2=\"46\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"3\" y=\"3\" width=\"74\" height=\"50\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"3\" y1=\"44\" x2=\"77\" y2=\"44\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">WIDE SHOT</text></svg>","ews":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"40\" cy=\"33\" r=\"2\" fill=\"none\" stroke=\"white\" stroke-width=\"1\"/><line x1=\"40\" y1=\"35\" x2=\"40\" y2=\"40\" stroke=\"white\" stroke-width=\"1\"/><line x1=\"40\" y1=\"37\" x2=\"38\" y2=\"39\" stroke=\"white\" stroke-width=\"1\"/><line x1=\"40\" y1=\"37\" x2=\"42\" y2=\"39\" stroke=\"white\" stroke-width=\"1\"/><rect x=\"2\" y=\"3\" width=\"76\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"2\" y1=\"40\" x2=\"78\" y2=\"40\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">EXTREME WIDE</text></svg>","insert":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"18\" y=\"8\" width=\"44\" height=\"32\" rx=\"2\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><ellipse cx=\"40\" cy=\"22\" rx=\"11\" ry=\"7\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"18\" y1=\"22\" x2=\"29\" y2=\"22\" stroke=\"white\" stroke-width=\"0.75\"/><line x1=\"51\" y1=\"22\" x2=\"62\" y2=\"22\" stroke=\"white\" stroke-width=\"0.75\"/><line x1=\"40\" y1=\"8\" x2=\"40\" y2=\"15\" stroke=\"white\" stroke-width=\"0.75\"/><line x1=\"40\" y1=\"29\" x2=\"40\" y2=\"40\" stroke=\"white\" stroke-width=\"0.75\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">INSERT SHOT</text></svg>","cutaway":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"23\" cy=\"20\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"23\" y1=\"24\" x2=\"23\" y2=\"36\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"23\" y1=\"29\" x2=\"18\" y2=\"35\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"23\" y1=\"29\" x2=\"28\" y2=\"35\" stroke=\"white\" stroke-width=\"1.5\"/><polygon points=\"40,19 52,14 52,24\" fill=\"#ff6b5b\" opacity=\"0.8\"/><rect x=\"52\" y=\"12\" width=\"20\" height=\"14\" rx=\"2\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"62\" cy=\"19\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">CUTAWAY</text></svg>"};
+const FRAMING_VIEW_SVGS = {"center":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><line x1=\"40\" y1=\"4\" x2=\"40\" y2=\"52\" stroke=\"#ff6b5b\" stroke-width=\"0.5\" opacity=\"0.4\"/><line x1=\"4\" y1=\"28\" x2=\"76\" y2=\"28\" stroke=\"#ff6b5b\" stroke-width=\"0.5\" opacity=\"0.4\"/><circle cx=\"40\" cy=\"20\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"25\" x2=\"40\" y2=\"38\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"30\" x2=\"34\" y2=\"36\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"30\" x2=\"46\" y2=\"36\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">CENTER FRAME</text></svg>","thirds":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><line x1=\"28\" y1=\"4\" x2=\"28\" y2=\"52\" stroke=\"#ff6b5b\" stroke-width=\"0.5\" opacity=\"0.45\"/><line x1=\"52\" y1=\"4\" x2=\"52\" y2=\"52\" stroke=\"#ff6b5b\" stroke-width=\"0.5\" opacity=\"0.45\"/><line x1=\"4\" y1=\"20\" x2=\"76\" y2=\"20\" stroke=\"#ff6b5b\" stroke-width=\"0.5\" opacity=\"0.45\"/><line x1=\"4\" y1=\"36\" x2=\"76\" y2=\"36\" stroke=\"#ff6b5b\" stroke-width=\"0.5\" opacity=\"0.45\"/><circle cx=\"52\" cy=\"20\" r=\"3\" fill=\"#ff6b5b\" opacity=\"0.8\"/><circle cx=\"52\" cy=\"16\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"52\" y1=\"20\" x2=\"52\" y2=\"30\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">RULE OF THIRDS</text></svg>","golden":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><path d=\"M 76 4 Q 76 37 50 37 Q 32 37 32 25 Q 32 18 40 18 Q 44 18 44 22 Q 44 25 41 25\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.2\" opacity=\"0.8\"/><circle cx=\"52\" cy=\"18\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"52\" y1=\"22\" x2=\"52\" y2=\"32\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">GOLDEN RATIO</text></svg>","lines":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><line x1=\"4\" y1=\"52\" x2=\"40\" y2=\"16\" stroke=\"#ff6b5b\" stroke-width=\"1\" opacity=\"0.55\"/><line x1=\"76\" y1=\"52\" x2=\"40\" y2=\"16\" stroke=\"#ff6b5b\" stroke-width=\"1\" opacity=\"0.55\"/><line x1=\"4\" y1=\"30\" x2=\"40\" y2=\"16\" stroke=\"#ff6b5b\" stroke-width=\"1\" opacity=\"0.55\"/><circle cx=\"40\" cy=\"12\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"16\" x2=\"40\" y2=\"26\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">LEADING LINES</text></svg>","symmetry":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><line x1=\"40\" y1=\"4\" x2=\"40\" y2=\"52\" stroke=\"#ff6b5b\" stroke-width=\"1.2\" opacity=\"0.7\"/><circle cx=\"40\" cy=\"15\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"20\" x2=\"40\" y2=\"35\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"25\" x2=\"33\" y2=\"31\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"25\" x2=\"47\" y2=\"31\" stroke=\"white\" stroke-width=\"1.5\"/><rect x=\"8\" y=\"8\" width=\"24\" height=\"34\" rx=\"1\" fill=\"none\" stroke=\"white\" stroke-width=\"0.75\" opacity=\"0.22\"/><rect x=\"48\" y=\"8\" width=\"24\" height=\"34\" rx=\"1\" fill=\"none\" stroke=\"white\" stroke-width=\"0.75\" opacity=\"0.22\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">SYMMETRICAL</text></svg>","diagonal":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><line x1=\"4\" y1=\"52\" x2=\"76\" y2=\"4\" stroke=\"#ff6b5b\" stroke-width=\"1.5\" opacity=\"0.55\"/><circle cx=\"57\" cy=\"16\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"57\" y1=\"20\" x2=\"57\" y2=\"32\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">DIAGONAL</text></svg>","negative":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><circle cx=\"18\" cy=\"20\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"18\" y1=\"25\" x2=\"18\" y2=\"38\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"18\" y1=\"30\" x2=\"12\" y2=\"36\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"18\" y1=\"30\" x2=\"24\" y2=\"36\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">NEGATIVE SPACE</text></svg>","frame":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"white\" stroke-width=\"1\" opacity=\"0.3\"/><rect x=\"14\" y=\"10\" width=\"52\" height=\"36\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"40\" cy=\"22\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"26\" x2=\"40\" y2=\"36\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">FRAME IN FRAME</text></svg>","foreground":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><rect x=\"6\" y=\"33\" width=\"10\" height=\"18\" rx=\"1\" fill=\"#1a2332\" stroke=\"#ff6b5b\" stroke-width=\"1\" opacity=\"0.7\"/><rect x=\"64\" y=\"36\" width=\"9\" height=\"15\" rx=\"1\" fill=\"#1a2332\" stroke=\"#ff6b5b\" stroke-width=\"1\" opacity=\"0.7\"/><circle cx=\"40\" cy=\"20\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"40\" y1=\"24\" x2=\"40\" y2=\"34\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">FOREGROUND</text></svg>","scurve":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"4\" width=\"72\" height=\"48\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1\"/><path d=\"M 8 52 C 24 42 20 28 40 24 S 60 10 72 4\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"2\" opacity=\"0.75\"/><circle cx=\"40\" cy=\"21\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">S-CURVE</text></svg>"};
+const MOVEMENT_SVGS = {"static":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"34\" y1=\"18\" x2=\"44\" y2=\"28\" stroke=\"#ff6b5b\" stroke-width=\"2\"/><line x1=\"44\" y1=\"18\" x2=\"34\" y2=\"28\" stroke=\"#ff6b5b\" stroke-width=\"2\"/><circle cx=\"60\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"60\" y1=\"30\" x2=\"60\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">STATIC</text></svg>","pan-left":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"19\" y1=\"25\" x2=\"48\" y2=\"25\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"22,21 14,25 22,29\" fill=\"#ff6b5b\"/><circle cx=\"62\" cy=\"36\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">PAN LEFT</text></svg>","pan-right":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"19\" y1=\"25\" x2=\"50\" y2=\"25\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"47,21 55,25 47,29\" fill=\"#ff6b5b\"/><circle cx=\"65\" cy=\"36\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">PAN RIGHT</text></svg>","tilt-up":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><polygon points=\"7,7 11,3 15,7\" fill=\"#ff6b5b\"/><line x1=\"11\" y1=\"3\" x2=\"11\" y2=\"18\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"11\" y1=\"18\" x2=\"11\" y2=\"44\" stroke=\"#ff6b5b\" stroke-width=\"1.5\" stroke-dasharray=\"2 2\" opacity=\"0.4\"/><circle cx=\"55\" cy=\"28\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"55\" y1=\"33\" x2=\"55\" y2=\"46\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">TILT UP</text></svg>","tilt-down":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><polygon points=\"7,49 11,53 15,49\" fill=\"#ff6b5b\"/><line x1=\"11\" y1=\"53\" x2=\"11\" y2=\"18\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><line x1=\"11\" y1=\"18\" x2=\"11\" y2=\"4\" stroke=\"#ff6b5b\" stroke-width=\"1.5\" stroke-dasharray=\"2 2\" opacity=\"0.4\"/><circle cx=\"55\" cy=\"28\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"55\" y1=\"33\" x2=\"55\" y2=\"46\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">TILT DOWN</text></svg>","dolly-in":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"19\" y1=\"25\" x2=\"48\" y2=\"25\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"45,21 51,25 45,29\" fill=\"#ff6b5b\"/><line x1=\"19\" y1=\"18\" x2=\"48\" y2=\"14\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" stroke-dasharray=\"2 2\"/><line x1=\"19\" y1=\"32\" x2=\"48\" y2=\"36\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" stroke-dasharray=\"2 2\"/><circle cx=\"62\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"62\" y1=\"30\" x2=\"62\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">DOLLY IN</text></svg>","dolly-out":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"19\" y1=\"25\" x2=\"48\" y2=\"25\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"22,21 16,25 22,29\" fill=\"#ff6b5b\"/><line x1=\"48\" y1=\"14\" x2=\"19\" y2=\"18\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" stroke-dasharray=\"2 2\"/><line x1=\"48\" y1=\"36\" x2=\"19\" y2=\"32\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" stroke-dasharray=\"2 2\"/><circle cx=\"62\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"62\" y1=\"30\" x2=\"62\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">DOLLY OUT</text></svg>","truck-left":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"30\" y=\"19\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"44\" cy=\"23.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"33\" y=\"16\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"30\" y1=\"38\" x2=\"8\" y2=\"38\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"11,34 5,38 11,42\" fill=\"#ff6b5b\"/><circle cx=\"27\" cy=\"38\" r=\"2.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"18\" cy=\"38\" r=\"2.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"62\" cy=\"23\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"62\" y1=\"28\" x2=\"62\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">TRUCK LEFT</text></svg>","truck-right":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"36\" y=\"19\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"50\" cy=\"23.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"39\" y=\"16\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"50\" y1=\"38\" x2=\"72\" y2=\"38\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"69,34 75,38 69,42\" fill=\"#ff6b5b\"/><circle cx=\"53\" cy=\"38\" r=\"2.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"62\" cy=\"38\" r=\"2.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"20\" cy=\"23\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"20\" y1=\"28\" x2=\"20\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">TRUCK RIGHT</text></svg>","handheld":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><path d=\"M 20 25 C 26 21 31 30 37 26 S 44 22 48 25\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"45,22 51,25 45,28\" fill=\"#ff6b5b\"/><circle cx=\"62\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"62\" y1=\"30\" x2=\"62\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">HANDHELD</text></svg>","steadicam":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><path d=\"M 20 25 C 28 21 38 30 48 25\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"45,22 51,25 45,28\" fill=\"#ff6b5b\"/><line x1=\"11\" y1=\"31\" x2=\"11\" y2=\"46\" stroke=\"#ff6b5b\" stroke-width=\"2\"/><circle cx=\"11\" cy=\"40\" r=\"5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><circle cx=\"62\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"62\" y1=\"30\" x2=\"62\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">STEADICAM</text></svg>","crane-up":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><path d=\"M 11 32 Q 22 10 48 20\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"44,16 51,19 46,24\" fill=\"#ff6b5b\"/><line x1=\"6\" y1=\"46\" x2=\"18\" y2=\"46\" stroke=\"#ff6b5b\" stroke-width=\"2.5\"/><circle cx=\"60\" cy=\"27\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"60\" y1=\"32\" x2=\"60\" y2=\"46\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">CRANE UP</text></svg>","zoom-in":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"19\" y1=\"18\" x2=\"50\" y2=\"22\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" stroke-dasharray=\"2 2\"/><line x1=\"19\" y1=\"33\" x2=\"50\" y2=\"29\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" stroke-dasharray=\"2 2\"/><line x1=\"19\" y1=\"25\" x2=\"50\" y2=\"25\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"46,22 52,25 46,28\" fill=\"#ff6b5b\"/><circle cx=\"62\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">ZOOM IN</text></svg>","orbit":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><circle cx=\"52\" cy=\"25\" r=\"5\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><line x1=\"52\" y1=\"30\" x2=\"52\" y2=\"44\" stroke=\"white\" stroke-width=\"1.5\"/><path d=\"M 14 25 A 22 12 0 1 1 14 26\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><polygon points=\"14,20 10,25 18,25\" fill=\"#ff6b5b\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">360\u00b0 ORBIT</text></svg>","whip-pan":"<svg viewBox=\"0 0 80 56\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"80\" height=\"56\" fill=\"#0f1520\"/><rect x=\"1\" y=\"1\" width=\"78\" height=\"54\" fill=\"none\" stroke=\"#2a3548\" stroke-width=\"0.75\"/><rect x=\"4\" y=\"21\" width=\"14\" height=\"9\" rx=\"1.5\" fill=\"#ff6b5b\"/><circle cx=\"18\" cy=\"25.5\" r=\"3.5\" fill=\"none\" stroke=\"#ff6b5b\" stroke-width=\"1.5\"/><rect x=\"7\" y=\"18\" width=\"5\" height=\"3\" fill=\"#ff6b5b\"/><line x1=\"20\" y1=\"21\" x2=\"74\" y2=\"21\" stroke=\"#ff6b5b\" stroke-width=\"2\"/><line x1=\"20\" y1=\"25\" x2=\"68\" y2=\"25\" stroke=\"#ff6b5b\" stroke-width=\"1\" opacity=\"0.45\"/><line x1=\"20\" y1=\"29\" x2=\"62\" y2=\"29\" stroke=\"#ff6b5b\" stroke-width=\"0.75\" opacity=\"0.2\"/><polygon points=\"71,17 77,21 71,25\" fill=\"#ff6b5b\"/><circle cx=\"58\" cy=\"38\" r=\"4\" fill=\"none\" stroke=\"white\" stroke-width=\"1.5\"/><text x=\"40\" y=\"53\" text-anchor=\"middle\" fill=\"#ff6b5b\" font-size=\"5.5\">WHIP PAN</text></svg>"};
+
+ANGLE_SVGS["eye-level"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><g transform="rotate(0,13,26.5)"><rect x="6" y="22" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="20" cy="26.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="9" y="19" width="5" height="3" fill="#ff6b5b"/></g><line x1="22" y1="26.5" x2="45" y2="26.5" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="37.6" y1="29.6" x2="45" y2="26.5" stroke="#ff6b5b" stroke-width="1.5"/><line x1="37.6" y1="23.4" x2="45" y2="26.5" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="60" cy="26" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="60" y1="31" x2="60" y2="45" stroke="white" stroke-width="1.5"/><line x1="60" y1="37" x2="54" y2="43" stroke="white" stroke-width="1.5"/><line x1="60" y1="37" x2="66" y2="43" stroke="white" stroke-width="1.5"/><line x1="60" y1="45" x2="56" y2="54" stroke="white" stroke-width="1.5"/><line x1="60" y1="45" x2="64" y2="54" stroke="white" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["low-angle"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><g transform="rotate(-35,13,44.5)"><rect x="6" y="40" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="20" cy="44.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="9" y="37" width="5" height="3" fill="#ff6b5b"/></g><line x1="18" y1="38" x2="52" y2="18" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="47" y1="24" x2="52" y2="18" stroke="#ff6b5b" stroke-width="1.5"/><line x1="44" y1="19" x2="52" y2="18" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="60" cy="19" r="4" fill="none" stroke="white" stroke-width="1.5"/><line x1="60" y1="23" x2="60" y2="34" stroke="white" stroke-width="1.5"/><line x1="60" y1="28" x2="55" y2="33" stroke="white" stroke-width="1.5"/><line x1="60" y1="28" x2="65" y2="33" stroke="white" stroke-width="1.5"/><line x1="60" y1="34" x2="57" y2="41" stroke="white" stroke-width="1.5"/><line x1="60" y1="34" x2="63" y2="41" stroke="white" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["high-angle"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><g transform="rotate(35,13,8.5)"><rect x="6" y="4" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="20" cy="8.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="9" y="1" width="5" height="3" fill="#ff6b5b"/></g><line x1="18" y1="12" x2="52" y2="38" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="44" y1="36" x2="52" y2="38" stroke="#ff6b5b" stroke-width="1.5"/><line x1="48" y1="31" x2="52" y2="38" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="60" cy="34" r="4" fill="none" stroke="white" stroke-width="1.5"/><line x1="60" y1="38" x2="60" y2="50" stroke="white" stroke-width="1.5"/><line x1="60" y1="43" x2="55" y2="48" stroke="white" stroke-width="1.5"/><line x1="60" y1="43" x2="65" y2="48" stroke="white" stroke-width="1.5"/><line x1="60" y1="50" x2="57" y2="56" stroke="white" stroke-width="1.5"/><line x1="60" y1="50" x2="63" y2="56" stroke="white" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["birds-eye"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><text x="40" y="12" text-anchor="middle" fill="#ff6b5b" font-size="8">TOP VIEW</text><ellipse cx="40" cy="35" rx="22" ry="8" fill="none" stroke="white" stroke-width="1" stroke-dasharray="2 2"/><circle cx="40" cy="35" r="4" fill="white" opacity="0.8"/><line x1="40" y1="22" x2="40" y2="29" stroke="white" stroke-width="1.5"/><rect x="33" y="4" width="14" height="9" rx="1.5" fill="#ff6b5b"/><line x1="40" y1="13" x2="40" y2="22" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="2 1"/></svg>`;
+ANGLE_SVGS["worms-eye"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><text x="40" y="52" text-anchor="middle" fill="#ff6b5b" font-size="7">BOTTOM VIEW</text><ellipse cx="40" cy="22" rx="22" ry="8" fill="none" stroke="white" stroke-width="1" stroke-dasharray="2 2"/><circle cx="40" cy="22" r="4" fill="white" opacity="0.8"/><rect x="33" y="43" width="14" height="9" rx="1.5" fill="#ff6b5b"/><line x1="40" y1="30" x2="40" y2="42" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="2 1"/></svg>`;
+ANGLE_SVGS["dutch-tilt"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><g transform="rotate(25,13,26.5)"><rect x="6" y="22" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="20" cy="26.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="9" y="19" width="5" height="3" fill="#ff6b5b"/></g><line x1="36" y1="10" x2="68" y2="50" stroke="#ff6b5b" stroke-width="0.75" stroke-dasharray="2 2"/><circle cx="55" cy="26" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="55" y1="31" x2="55" y2="45" stroke="white" stroke-width="1.5"/><line x1="55" y1="37" x2="49" y2="43" stroke="white" stroke-width="1.5"/><line x1="55" y1="37" x2="61" y2="43" stroke="white" stroke-width="1.5"/><line x1="55" y1="45" x2="51" y2="54" stroke="white" stroke-width="1.5"/><line x1="55" y1="45" x2="59" y2="54" stroke="white" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["over-shoulder"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><circle cx="22" cy="24" r="7" fill="none" stroke="white" stroke-width="1.5" opacity="0.4"/><rect x="16" y="31" width="12" height="18" rx="2" fill="none" stroke="white" stroke-width="1.5" opacity="0.4"/><g transform="rotate(-20,25,20.5)"><rect x="18" y="16" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="32" cy="20.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="21" y="13" width="5" height="3" fill="#ff6b5b"/></g><circle cx="60" cy="22" r="6" fill="none" stroke="white" stroke-width="1.5"/><line x1="60" y1="28" x2="60" y2="44" stroke="white" stroke-width="1.5"/><line x1="60" y1="34" x2="53" y2="40" stroke="white" stroke-width="1.5"/><line x1="60" y1="34" x2="67" y2="40" stroke="white" stroke-width="1.5"/><line x1="32" y1="23" x2="48" y2="23" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="41" y1="26" x2="48" y2="23" stroke="#ff6b5b" stroke-width="1.5"/><line x1="41" y1="20" x2="48" y2="23" stroke="#ff6b5b" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["pov"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><circle cx="40" cy="22" r="7" fill="none" stroke="white" stroke-width="1.5"/><line x1="40" y1="30" x2="40" y2="46" stroke="white" stroke-width="1.5"/><line x1="40" y1="36" x2="32" y2="44" stroke="white" stroke-width="1.5"/><line x1="40" y1="36" x2="48" y2="44" stroke="white" stroke-width="1.5"/><rect x="2" y="45" width="76" height="3" rx="1" fill="#ff6b5b" opacity="0.6"/><text x="40" y="54" text-anchor="middle" fill="#ff6b5b" font-size="6">1st PERSON</text></svg>`;
+ANGLE_SVGS["extreme-cu"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="12" y="6" width="56" height="44" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><ellipse cx="40" cy="24" rx="12" ry="9" fill="none" stroke="white" stroke-width="1.5"/><ellipse cx="40" cy="24" rx="5" ry="5" fill="none" stroke="white" stroke-width="1.5"/><circle cx="40" cy="24" r="2" fill="white"/><text x="40" y="52" text-anchor="middle" fill="#ff6b5b" font-size="6">EXTREME CU</text></svg>`;
+ANGLE_SVGS["close-up"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="16" y="4" width="48" height="48" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="40" cy="22" r="12" fill="none" stroke="white" stroke-width="1.5"/><line x1="28" y1="34" x2="20" y2="52" stroke="white" stroke-width="1.5"/><line x1="52" y1="34" x2="60" y2="52" stroke="white" stroke-width="1.5"/><text x="40" y="55" text-anchor="middle" fill="#ff6b5b" font-size="6">CLOSE-UP</text></svg>`;
+ANGLE_SVGS["medium-cu"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="16" y="4" width="48" height="50" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="40" cy="20" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="40" y1="25" x2="40" y2="38" stroke="white" stroke-width="1.5"/><line x1="40" y1="30" x2="34" y2="36" stroke="white" stroke-width="1.5"/><line x1="40" y1="30" x2="46" y2="36" stroke="white" stroke-width="1.5"/><line x1="16" y1="38" x2="64" y2="38" stroke="#ff6b5b" stroke-width="0.75" stroke-dasharray="2 2"/><text x="40" y="54" text-anchor="middle" fill="#ff6b5b" font-size="6">MED. CLOSE-UP</text></svg>`;
+ANGLE_SVGS["medium-shot"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="16" y="4" width="48" height="50" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="40" cy="18" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="40" y1="23" x2="40" y2="37" stroke="white" stroke-width="1.5"/><line x1="40" y1="28" x2="34" y2="34" stroke="white" stroke-width="1.5"/><line x1="40" y1="28" x2="46" y2="34" stroke="white" stroke-width="1.5"/><line x1="40" y1="37" x2="36" y2="46" stroke="white" stroke-width="1.5"/><line x1="40" y1="37" x2="44" y2="46" stroke="white" stroke-width="1.5"/><line x1="16" y1="44" x2="64" y2="44" stroke="#ff6b5b" stroke-width="0.75" stroke-dasharray="2 2"/><text x="40" y="54" text-anchor="middle" fill="#ff6b5b" font-size="6">MEDIUM SHOT</text></svg>`;
+ANGLE_SVGS["full-shot"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="20" y="2" width="40" height="52" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="40" cy="14" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="40" y1="19" x2="40" y2="33" stroke="white" stroke-width="1.5"/><line x1="40" y1="24" x2="34" y2="30" stroke="white" stroke-width="1.5"/><line x1="40" y1="24" x2="46" y2="30" stroke="white" stroke-width="1.5"/><line x1="40" y1="33" x2="36" y2="46" stroke="white" stroke-width="1.5"/><line x1="40" y1="33" x2="44" y2="46" stroke="white" stroke-width="1.5"/><text x="40" y="56" text-anchor="middle" fill="#ff6b5b" font-size="6">FULL SHOT</text></svg>`;
+ANGLE_SVGS["wide-shot"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="4" y="4" width="72" height="48" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="40" cy="28" r="3" fill="none" stroke="white" stroke-width="1.5"/><line x1="40" y1="31" x2="40" y2="39" stroke="white" stroke-width="1.5"/><line x1="40" y1="34" x2="37" y2="37" stroke="white" stroke-width="1.5"/><line x1="40" y1="34" x2="43" y2="37" stroke="white" stroke-width="1.5"/><line x1="40" y1="39" x2="38" y2="44" stroke="white" stroke-width="1.5"/><line x1="40" y1="39" x2="42" y2="44" stroke="white" stroke-width="1.5"/><line x1="4" y1="44" x2="76" y2="44" stroke="#2a3548" stroke-width="0.75"/><text x="40" y="54" text-anchor="middle" fill="#ff6b5b" font-size="6">WIDE SHOT</text></svg>`;
+ANGLE_SVGS["extreme-wide"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><rect x="2" y="4" width="76" height="46" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="40" cy="33" r="2" fill="none" stroke="white" stroke-width="1.5"/><line x1="40" y1="35" x2="40" y2="40" stroke="white" stroke-width="1.5"/><line x1="40" y1="37" x2="38" y2="39" stroke="white" stroke-width="1.5"/><line x1="40" y1="37" x2="42" y2="39" stroke="white" stroke-width="1.5"/><line x1="2" y1="40" x2="78" y2="40" stroke="#2a3548" stroke-width="0.75"/><line x1="2" y1="44" x2="78" y2="44" stroke="#2a3548" stroke-width="0.5"/><text x="40" y="52" text-anchor="middle" fill="#ff6b5b" font-size="6">EXTREME WIDE</text></svg>`;
+ANGLE_SVGS["aerial"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><text x="40" y="12" text-anchor="middle" fill="#ff6b5b" font-size="7">AERIAL DRONE</text><line x1="10" y1="20" x2="70" y2="20" stroke="#2a3548" stroke-width="1"/><line x1="10" y1="30" x2="70" y2="30" stroke="#2a3548" stroke-width="1"/><line x1="10" y1="40" x2="70" y2="40" stroke="#2a3548" stroke-width="1"/><line x1="10" y1="50" x2="70" y2="50" stroke="#2a3548" stroke-width="1"/><line x1="20" y1="18" x2="20" y2="52" stroke="#2a3548" stroke-width="1"/><line x1="35" y1="18" x2="35" y2="52" stroke="#2a3548" stroke-width="1"/><line x1="50" y1="18" x2="50" y2="52" stroke="#2a3548" stroke-width="1"/><line x1="65" y1="18" x2="65" y2="52" stroke="#2a3548" stroke-width="1"/><circle cx="40" cy="35" r="3" fill="#ff6b5b"/></svg>`;
+ANGLE_SVGS["two-shot"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><circle cx="27" cy="22" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="27" y1="27" x2="27" y2="40" stroke="white" stroke-width="1.5"/><line x1="27" y1="32" x2="21" y2="38" stroke="white" stroke-width="1.5"/><line x1="27" y1="32" x2="33" y2="38" stroke="white" stroke-width="1.5"/><line x1="27" y1="40" x2="23" y2="50" stroke="white" stroke-width="1.5"/><line x1="27" y1="40" x2="31" y2="50" stroke="white" stroke-width="1.5"/><circle cx="53" cy="22" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="53" y1="27" x2="53" y2="40" stroke="white" stroke-width="1.5"/><line x1="53" y1="32" x2="47" y2="38" stroke="white" stroke-width="1.5"/><line x1="53" y1="32" x2="59" y2="38" stroke="white" stroke-width="1.5"/><line x1="53" y1="40" x2="49" y2="50" stroke="white" stroke-width="1.5"/><line x1="53" y1="40" x2="57" y2="50" stroke="white" stroke-width="1.5"/><rect x="4" y="4" width="72" height="48" rx="2" fill="none" stroke="#ff6b5b" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["tracking"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><circle cx="55" cy="22" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="55" y1="27" x2="55" y2="40" stroke="white" stroke-width="1.5"/><line x1="55" y1="32" x2="49" y2="38" stroke="white" stroke-width="1.5"/><line x1="55" y1="32" x2="61" y2="38" stroke="white" stroke-width="1.5"/><line x1="55" y1="40" x2="51" y2="50" stroke="white" stroke-width="1.5"/><line x1="55" y1="40" x2="59" y2="50" stroke="white" stroke-width="1.5"/><g transform="rotate(0,13,26.5)"><rect x="6" y="22" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="20" cy="26.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="9" y="19" width="5" height="3" fill="#ff6b5b"/></g><line x1="20" y1="26" x2="44" y2="26" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="3 2"/><polygon points="42 23 48 26 42 29" fill="#ff6b5b"/><line x1="10" y1="48" x2="72" y2="48" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="15" cy="48" r="3" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><circle cx="65" cy="48" r="3" fill="none" stroke="#ff6b5b" stroke-width="1.5"/></svg>`;
+ANGLE_SVGS["dolly-in"]=`<svg viewBox="0 0 80 56" xmlns="http://www.w3.org/2000/svg"><rect width="80" height="56" fill="#0f1520"/><rect x="1" y="1" width="78" height="54" fill="none" stroke="#2a3548" stroke-width="0.75"/><g transform="rotate(0,13,26.5)"><rect x="6" y="22" width="14" height="9" rx="1.5" fill="#ff6b5b"/><circle cx="20" cy="26.5" r="3.5" fill="none" stroke="#ff6b5b" stroke-width="1.5"/><rect x="9" y="19" width="5" height="3" fill="#ff6b5b"/></g><line x1="20" y1="16" x2="48" y2="8" stroke="#ff6b5b" stroke-width="0.75" stroke-dasharray="2 2"/><line x1="20" y1="34" x2="48" y2="44" stroke="#ff6b5b" stroke-width="0.75" stroke-dasharray="2 2"/><circle cx="60" cy="22" r="5" fill="none" stroke="white" stroke-width="1.5"/><line x1="60" y1="27" x2="60" y2="40" stroke="white" stroke-width="1.5"/><line x1="60" y1="32" x2="54" y2="38" stroke="white" stroke-width="1.5"/><line x1="60" y1="32" x2="66" y2="38" stroke="white" stroke-width="1.5"/><line x1="60" y1="40" x2="56" y2="50" stroke="white" stroke-width="1.5"/><line x1="60" y1="40" x2="64" y2="50" stroke="white" stroke-width="1.5"/><line x1="22" y1="26.5" x2="44" y2="26.5" stroke="#ff6b5b" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="37" y1="30" x2="44" y2="26.5" stroke="#ff6b5b" stroke-width="1.5"/><line x1="37" y1="23" x2="44" y2="26.5" stroke="#ff6b5b" stroke-width="1.5"/><text x="40" y="54" text-anchor="middle" fill="#ff6b5b" font-size="6">DOLLY IN</text></svg>`;
+
+let characters = JSON.parse(localStorage.getItem('rodeoCharacters')) || [];
+let multishots = JSON.parse(localStorage.getItem('rodeoMultishots')) || [];
+let library    = JSON.parse(localStorage.getItem('rodeoLibrary'))    || [];
+let wfSteps    = JSON.parse(localStorage.getItem('rodeoWorkflow'))   || [];
+let selCamera  = '';
+let selStyle   = '';
+let wfEditId   = null;
+
+const modelInfo = {
+  grok:       {name:'Grok Imagine',       syntax:'Natural language, structured sections'},
+  midjourney: {name:'Midjourney 8.1',     syntax:'Use -- parameters (--ar, --niji)'},
+  nanoBanana: {name:'Nano Banana Pro',    syntax:'Detailed natural language with specific values'},
+  chatgpt2:   {name:'ChatGPT Images 2.0', syntax:'Conversational prompts with style references'},
+  kling:      {name:'Kling 3',            syntax:'Scene descriptions with motion cues'},
+  seedance:   {name:'Seedance 2.0',       syntax:'Shot-by-shot with camera directions'},
+};
+
+function renderCameras() {
+  renderTechLensGrid();
+  document.getElementById('cameraGrid').innerHTML = CAMERAS.map((c,i) => `
+    <div class="camera-card${selCamera===c.name?' selected':''}" onclick="selectCamera(${i})">
+      <div class="cam-name">${c.name}</div>
+      <div class="cam-desc">${c.desc}</div>
+    </div>`).join('');
+}
+function selectCamera(i) {
+  const cam = CAMERAS[i];
+  if (selCamera === cam.name) {
+    selCamera = '';
+    document.getElementById('cameraBody').value = '';
+  } else {
+    selCamera = cam.name;
+    document.getElementById('cameraBody').value = cam.prompt;
+  }
+  renderCameras(); updateFullPrompt();
+}
+
+let selLens = '';
+
+function renderLenses() {
+  document.getElementById('lensGrid').innerHTML = LENSES.map((l,i) => `
+    <div class="lens-card${selLens===l.name?' selected':''}" onclick="selectLens(${i})" title="${l.name} · ${l.type}">
+      ${LENS_SVGS[l.key]||''}
+      <div class="lens-name">${l.name}</div>
+    </div>`).join('');
+}
+function selectTechLens(i) {
+  const l = TECH_LENSES[i];
+  let selTL = document.querySelector('#techLensGrid .camera-card.selected');
+  if (selTL && selTL.dataset.idx == i) {
+    selTL.classList.remove('selected');
+    document.getElementById('camera').value = '';
+    updateFullPrompt(); return;
+  }
+  document.querySelectorAll('#techLensGrid .camera-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector('#techLensGrid .camera-card[data-idx="'+i+'"]').classList.add('selected');
+  document.getElementById('camera').value = l.prompt;
+  updateFullPrompt();
+}
+function renderTechLensGrid() {
+  document.getElementById('techLensGrid').innerHTML = TECH_LENSES.map((l,i) =>
+    `<div class="camera-card" data-idx="${i}" onclick="selectTechLens(${i})">
+      <div class="cam-name">${l.name}</div>
+      <div class="cam-desc">${l.desc}</div>
+    </div>`
+  ).join('');
+}
+function selectLens(i) {
+  const l = LENSES[i];
+  if (selLens === l.name) {
+    selLens = '';
+    document.getElementById('lensBody').value = '';
+  } else {
+    selLens = l.name;
+    document.getElementById('lensBody').value = l.prompt;
+  }
+  renderLenses(); updateFullPrompt();
+}
+
+function renderMovieStyles() {
+  document.getElementById('movieGrid').innerHTML = MOVIE_STYLES.map((s,i) => `
+    <div class="movie-card${selStyle===s.name?' selected':''}" onclick="selectStyle(${i})">
+      <div class="movie-icon">${s.icon}</div>
+      <div class="movie-name">${s.name}</div>
+    </div>`).join('');
+}
+function selectStyle(i) {
+  const st = MOVIE_STYLES[i];
+  if (selStyle === st.name) {
+    selStyle = '';
+    document.getElementById('style').value = '';
+  } else {
+    selStyle = st.name;
+    document.getElementById('style').value = st.prompt;
+  }
+  renderMovieStyles(); updateFullPrompt();
+}
+
+function renderAngles() {
+  document.getElementById('angleGrid').innerHTML = CAMERA_ANGLES.map((a,i) => `
+    <div class="angle-card" onclick="appendComposition(CAMERA_ANGLES[${i}].prompt)" title="${a.name}">
+      <div class="angle-preview">${ANGLE_SVGS[a.key]||''}</div>
+      <span class="angle-name">${a.name}</span>
+    </div>`).join('');
+}
+function renderSizeViews() {
+  document.getElementById('sizeGrid').innerHTML = SIZE_VIEWS.map((a,i) => `
+    <div class="angle-card" onclick="appendComposition(SIZE_VIEWS[${i}].prompt)" title="${a.name}">
+      <div class="angle-preview">${SIZE_VIEW_SVGS[a.key]||''}</div>
+      <span class="angle-name">${a.name}</span>
+    </div>`).join('');
+}
+function renderFramingViews() {
+  document.getElementById('framingGrid').innerHTML = FRAMING_VIEWS.map((a,i) => `
+    <div class="angle-card" onclick="appendComposition(FRAMING_VIEWS[${i}].prompt)" title="${a.name}">
+      <div class="angle-preview">${FRAMING_VIEW_SVGS[a.key]||''}</div>
+      <span class="angle-name">${a.name}</span>
+    </div>`).join('');
+}
+function renderMovements() {
+  document.getElementById('movementGrid').innerHTML = MOVEMENTS.map((a,i) => `
+    <div class="angle-card" onclick="appendComposition(MOVEMENTS[${i}].prompt)" title="${a.name}">
+      <div class="angle-preview">${MOVEMENT_SVGS[a.key]||''}</div>
+      <span class="angle-name">${a.name}</span>
+    </div>`).join('');
+}
+
+function appendComposition(text) {
+  const f = document.getElementById('composition');
+  f.value = f.value ? f.value + ', ' + text : text;
+  updateFullPrompt();
+}
+
+function updateFullPrompt() {
+  const subject     = document.getElementById('subject').value.trim();
+  const action      = document.getElementById('action').value.trim();
+  const composition = document.getElementById('composition').value.trim();
+  const lighting    = document.getElementById('lighting').value.trim();
+  const camera      = document.getElementById('camera').value.trim();
+  const cameraBody  = document.getElementById('cameraBody').value.trim();
+  const lensBody    = document.getElementById('lensBody').value.trim();
+  const style       = document.getElementById('style').value.trim();
+  document.getElementById('fullPrompt').textContent =
+    formatPromptForModel(subject,action,composition,lighting,camera,cameraBody,lensBody,style) || 'Fill in the fields...';
+}
+
+function formatPromptForModel(subject,action,composition,lighting,camera,cameraBody,lensBody,style) {
+  const model = document.getElementById('modelSelector').value;
+  const camTag = [cameraBody, lensBody].filter(Boolean).join(', ');
+  switch(model) {
+    case 'grok':
+      return `Subject: ${subject}${action?'\nAction: '+action:''}\nComposition: ${composition}\nLighting: ${lighting}\nCamera: ${camera}${camTag?'\n'+camTag:''}\nStyle: ${style}`;
+    case 'midjourney':
+      return `${subject}${action?', '+action:''}, ${composition}, ${lighting}, ${camera}${camTag?', '+camTag:''}, ${style} --ar 16:9 --niji 6`;
+    case 'nanoBanana':
+      return `A highly detailed professional image: ${subject}${action?', '+action:''}. Composition: ${composition}. Lighting: ${lighting}. ${camera}${camTag?', '+camTag:''}. Style: ${style}.`;
+    case 'chatgpt2':
+      return `Create an image of: ${subject}${action?'. Action: '+action:''}. Scene: ${composition}. Lighting: ${lighting}. Photography: ${camera}${camTag?', '+camTag:''}. Style: ${style}.`;
+    case 'kling':
+      return `[SCENE] ${subject}${action?' — '+action:''}\n[CAMERA] ${composition}, ${camera}${camTag?', '+camTag:''}\n[LIGHTING] ${lighting}\n[STYLE] ${style}`;
+    case 'seedance':
+      return `[SHOT]\nSubject: ${subject}${action?'\nAction: '+action:''}\nCamera: ${composition}, ${camera}${camTag?', '+camTag:''}\nLighting: ${lighting}\nAesthetic: ${style}`;
+    default:
+      return [subject,action,composition,lighting,camera,camTag,style].filter(Boolean).join(' | ');
+  }
+}
+
+function updateModelSyntax() {
+  const m = document.getElementById('modelSelector').value;
+  document.getElementById('modelInfo').textContent = modelInfo[m].syntax;
+  updateFullPrompt();
+}
+
+function beautifyPrompt() { updateFullPrompt(); }
+function expandPrompt() {
+  const s = document.getElementById('subject').value;
+  if (s && !s.includes('cinematic')) {
+    document.getElementById('subject').value = s + ', cinematic, professional';
+    updateFullPrompt();
+  }
+}
+function simplifyPrompt() {
+  const t = (document.getElementById('subject').value + ' ' + document.getElementById('composition').value)
+    .replace(/cinematic|professional/g,'').trim();
+  alert('Simplified:\n\n' + t);
+}
+function rollElements() {
+  const shots = ['close-up','wide shot','medium shot','aerial','tracking shot'];
+  const moods = ['moody','vibrant','ethereal','surreal','desaturated'];
+  const f = document.getElementById('composition');
+  f.value = (f.value ? f.value + ', ' : '') + shots[Math.floor(Math.random()*shots.length)];
+  const l = document.getElementById('lighting');
+  l.value = (l.value ? l.value + ', ' : '') + moods[Math.floor(Math.random()*moods.length)];
+  updateFullPrompt();
+}
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('fullPrompt').textContent);
+  const btn = document.getElementById('copyBtn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<i class="ti ti-check"></i> Copied!';
+  btn.style.background='#22c55e';btn.style.borderColor='#22c55e';
+  setTimeout(()=>{btn.innerHTML=orig;btn.style.background='';btn.style.borderColor='';},1600);
+}
+function insertPreset(section, text) {
+  const f = document.getElementById(section);
+  f.value = f.value ? f.value + ', ' + text : text;
+  updateFullPrompt();
+}
+
+function switchTab(tabName, btn) {
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tabName).classList.add('active');
+  btn.classList.add('active');
+  if (tabName==='smartedit')
+    document.getElementById('smartEditSource').textContent = document.getElementById('fullPrompt').textContent;
+}
+
+// CHARACTERS
+let charImageData = '';  // holds base64 or URL for current modal
+
+function charLoadFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    charImageData = e.target.result;
+    const prev = document.getElementById('charImgPreview');
+    prev.src = charImageData;
+    prev.style.display = 'block';
+    document.getElementById('charImageUrl').value = '';
+  };
+  reader.readAsDataURL(file);
+}
+function charPreviewUrl(url) {
+  if (!url) { charImageData = ''; return; }
+  charImageData = url;
+  const prev = document.getElementById('charImgPreview');
+  prev.src = url;
+  prev.style.display = 'block';
+}
+
+function openCharacterModal(editId) {
+  charImageData = '';
+  document.getElementById('charName').value = '';
+  document.getElementById('charDescription').value = '';
+  document.getElementById('charImageUrl').value = '';
+  document.getElementById('charImgPreview').src = '';
+  document.getElementById('charImgPreview').style.display = 'none';
+  document.getElementById('charFileInput').value = '';
+  if (editId !== undefined) {
+    const c = characters.find(x => x.id === editId);
+    if (c) {
+      document.getElementById('charModalTitle').textContent = 'Edit Character';
+      document.getElementById('charName').value = c.name;
+      document.getElementById('charDescription').value = c.description;
+      if (c.image) {
+        charImageData = c.image;
+        document.getElementById('charImgPreview').src = c.image;
+        document.getElementById('charImgPreview').style.display = 'block';
+        if (c.image.startsWith('http')) document.getElementById('charImageUrl').value = c.image;
+      }
+      document.getElementById('characterModal').dataset.editId = editId;
+    }
+  } else {
+    document.getElementById('charModalTitle').textContent = 'Create Character';
+    delete document.getElementById('characterModal').dataset.editId;
+  }
+  document.getElementById('characterModal').classList.add('active');
+}
+function closeCharacterModal() {
+  document.getElementById('characterModal').classList.remove('active');
+  charImageData = '';
+}
+function saveCharacter() {
+  const name = document.getElementById('charName').value.trim();
+  const desc = document.getElementById('charDescription').value.trim();
+  if (!name || !desc) { alert('Fill in name and description'); return; }
+  const editId = document.getElementById('characterModal').dataset.editId;
+  if (editId) {
+    const idx = characters.findIndex(c => c.id === parseInt(editId));
+    if (idx > -1) characters[idx] = { ...characters[idx], name, description: desc, image: charImageData };
+  } else {
+    characters.push({ id: Date.now(), name, description: desc, image: charImageData });
+  }
+  localStorage.setItem('rodeoCharacters', JSON.stringify(characters));
+  closeCharacterModal(); renderCharacters();
+}
+function renderCharacters() {
+  const list = document.getElementById('charactersList');
+  if (!characters.length) { list.innerHTML = '<div class="empty-state"><i class="ti ti-users"></i><p>No characters yet.</p></div>'; return; }
+  list.innerHTML = characters.map((c,i) => `
+    <div class="char-card-sm">
+      ${c.image
+        ? `<img src="${c.image}" class="char-portrait" alt="${c.name}" onerror="this.style.display='none'">`
+        : `<div class="char-portrait-placeholder">🎭</div>`}
+      <strong style="font-size:.82rem;display:block;margin-bottom:.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</strong>
+      <p style="font-size:.72rem;color:var(--text-secondary);line-height:1.4;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin-bottom:.55rem">${c.description}</p>
+      <div style="display:flex;gap:.3rem">
+        <button onclick="charUseInPrompt(${i})" style="flex:1;font-size:.75rem;padding:.3rem .4rem"><i class="ti ti-arrow-up-left"></i> Use</button>
+		<button onclick="openCharacterModal(${c.id})" style="flex:1;font-size:.75rem;padding:.3rem .4rem"><i class="ti ti-edit"></i> Edit</button>
+		<button onclick="deleteCharacter(${c.id})" style="flex:1;font-size:.75rem;padding:.3rem .4rem;border-color:#e53e3e;color:#e53e3e"><i class="ti ti-trash"></i> Del</button>
+      </div>
+    </div>`).join('');
+}
+function charUseInPrompt(i) {
+  const c = characters[i];
+  const subj = document.getElementById('subject');
+  subj.value = c.name + (c.description ? ', ' + c.description : '');
+  updateFullPrompt();
+  document.querySelectorAll('.tab-btn')[0].click();
+}
+function deleteCharacter(id) {
+  if (!confirm('Delete this character?')) return;
+  characters = characters.filter(c => c.id !== id);
+  localStorage.setItem('rodeoCharacters', JSON.stringify(characters)); renderCharacters();
+}
+
+// MULTISHOT
+function addMultiShot() {
+  // Populate character picker
+  const charPicker = document.getElementById('msCharPicker');
+  if (characters.length) {
+    charPicker.innerHTML = characters.map((c,i) => `
+      <div class="ms-char-item" onclick="msSelectChar(this,'${c.name.replace(/'/g,"\\'")}','${(c.description||'').replace(/'/g,"\\'").substring(0,80)}')" title="${c.name}">
+        ${c.image ? `<img src="${c.image}" alt="${c.name}">` : `<div style="aspect-ratio:1;background:var(--bg-secondary);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:.25rem">🎭</div>`}
+        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.name}</div>
+      </div>`).join('');
+  } else {
+    charPicker.innerHTML = '<p style="color:var(--text-muted);font-size:.78rem;grid-column:1/-1">No characters saved yet.</p>';
+  }
+
+  // Populate library picker
+  const libPicker = document.getElementById('msLibPicker');
+  if (library.length) {
+    libPicker.innerHTML = library.map((item,i) => `
+      <div class="ms-lib-item" onclick="msSelectBg(this,'${item.url}','${(item.prompt||'').replace(/'/g,"\\'")}')" title="${item.prompt||''}">
+        <img src="${item.url}" alt="" onerror="this.style.display='none'">
+      </div>`).join('');
+  } else {
+    libPicker.innerHTML = '<p style="color:var(--text-muted);font-size:.78rem;grid-column:1/-1">No library images yet.</p>';
+  }
+
+  // Reset hidden fields
+  document.getElementById('shotCharRef').value = '';
+  document.getElementById('shotBgRef').value = '';
+  updateMsSyntaxTag();
+  document.getElementById('multishotModal').classList.add('active');
+}
+
+function editMultiShot(id) {
+  const s = multishots.find(x => x.id === id);
+  if (!s) return;
+  addMultiShot(); // populates pickers
+  document.getElementById('shotNum').value        = s.num;
+  document.getElementById('shotModel').value      = s.model;
+  document.getElementById('shotSubject').value    = s.subject;
+  document.getElementById('shotComposition').value = s.composition || '';
+  document.getElementById('shotDuration').value   = s.duration;
+  document.getElementById('shotTransition').value = s.transition;
+  document.getElementById('shotCharRef').value    = s.charRef || '';
+  document.getElementById('shotBgRef').value      = s.bgRef || '';
+  document.getElementById('multishotModal').dataset.editId = id;
+  updateMsSyntaxTag();
+}
+
+function msSelectChar(el, name, desc) {
+  document.querySelectorAll('#msCharPicker .ms-char-item').forEach(e => e.classList.remove('selected'));
+  const current = document.getElementById('shotCharRef').value;
+  if (current === name) {
+    document.getElementById('shotCharRef').value = '';
+  } else {
+    el.classList.add('selected');
+    document.getElementById('shotCharRef').value = name + (desc ? ' — ' + desc : '');
+  }
+}
+
+function msSelectBg(el, url, label) {
+  document.querySelectorAll('#msLibPicker .ms-lib-item').forEach(e => e.classList.remove('selected'));
+  const current = document.getElementById('shotBgRef').value;
+  if (current === url) {
+    document.getElementById('shotBgRef').value = '';
+  } else {
+    el.classList.add('selected');
+    document.getElementById('shotBgRef').value = url + '||' + label;
+  }
+}
+
+function updateMsSyntaxTag() {
+  const model = document.getElementById('shotModel').value;
+  const tag   = document.getElementById('msSyntaxTag');
+  if (model === 'seedance') {
+    tag.textContent = 'Seedance 2.0 syntax';
+    tag.className   = 'ms-syntax-tag ms-syntax-seedance';
+  } else if (model === 'kling') {
+    tag.textContent = 'Kling 3 syntax';
+    tag.className   = 'ms-syntax-tag ms-syntax-kling';
+  } else {
+    tag.textContent = '';
+    tag.className   = 'ms-syntax-tag';
+  }
+}
+
+function formatMultishotPrompt(model, num, subject, composition, charRef, bgRef, duration, transition) {
+  const charPart = charRef ? `Character: ${charRef}` : '';
+  const bgLabel  = bgRef ? bgRef.split('||')[1] || 'reference image' : '';
+  const bgPart   = bgRef ? `Background/ref: ${bgLabel}` : '';
+
+  if (model === 'seedance') {
+    const parts = [subject, composition, charPart, bgPart].filter(Boolean).join(', ');
+    return `[SHOT ${num}] ${parts} | cinematic video | duration: ${duration}s | transition: ${transition}`;
+  }
+
+  if (model === 'kling') {
+    const lines = [
+      `[Scene ${num}]`,
+      `Subject: ${subject}`,
+      composition ? `Camera: ${composition}` : null,
+      charPart || null,
+      bgPart || null,
+      `Style: photorealistic, cinematic, high detail`,
+      `Duration: ${duration}s`,
+      `Edit: ${transition}`
+    ].filter(Boolean);
+    return lines.join('\n');
+  }
+
+  // Fallback for other models — use existing formatter
+  return formatPromptForModel(subject, composition, '', '', '', '');
+}
+
+function closeMultishotModal() {
+  document.getElementById('multishotModal').classList.remove('active');
+  document.getElementById('shotNum').value = '';
+  document.getElementById('shotSubject').value = '';
+  document.getElementById('shotComposition').value = '';
+  document.getElementById('shotCharRef').value = '';
+  document.getElementById('shotBgRef').value = '';
+}
+
+function saveMultiShot() {
+  const num        = document.getElementById('shotNum').value.trim();
+  const model      = document.getElementById('shotModel').value;
+  const subj       = document.getElementById('shotSubject').value.trim();
+  const comp       = document.getElementById('shotComposition').value.trim();
+  const dur        = document.getElementById('shotDuration').value;
+  const trans      = document.getElementById('shotTransition').value;
+  const charRef    = document.getElementById('shotCharRef').value;
+  const bgRef      = document.getElementById('shotBgRef').value;
+  if (!num || !subj) { alert('Fill in shot number and subject'); return; }
+  const fp = formatMultishotPrompt(model, num, subj, comp, charRef, bgRef, dur, trans);
+  const editId = document.getElementById('multishotModal').dataset.editId;
+  if (editId) {
+    const idx = multishots.findIndex(x => x.id === Number(editId));
+    if (idx > -1) multishots[idx] = {...multishots[idx], num, model, subject:subj, composition:comp, duration:dur, transition:trans, charRef, bgRef, fullPrompt:fp};
+    delete document.getElementById('multishotModal').dataset.editId;
+  } else {
+    multishots.push({id:Date.now(), num, model, subject:subj, composition:comp, duration:dur, transition:trans, charRef, bgRef, fullPrompt:fp});
+  }
+  localStorage.setItem('rodeoMultishots', JSON.stringify(multishots));
+  closeMultishotModal(); renderMultishots();
+}
+
+function renderMultishots() {
+  const cont = document.getElementById('shotsGrid');
+  const tl   = document.getElementById('timeline');
+  if (!multishots.length) {
+    cont.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><p>No shots yet.</p></div>';
+    tl.innerHTML = ''; return;
+  }
+  tl.innerHTML = multishots.map((s,i) =>
+    `<div class="timeline-item">${s.num}</div>${i < multishots.length-1 ? '<div class="timeline-arrow">→</div>' : ''}`
+  ).join('');
+  cont.innerHTML = multishots.map((s,i) => {
+    const bgUrl = s.bgRef ? s.bgRef.split('||')[0] : '';
+    const bgStyle = bgUrl ? `background:url('${bgUrl}') center/cover;` : '';
+    return `
+    <div class="shot-card">
+      ${bgUrl ? `<img src="${bgUrl}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin-bottom:.5rem;opacity:.7" onerror="this.remove()">` : ''}
+      <div class="shot-number">Shot ${s.num}</div>
+      <div class="shot-meta">
+        <span class="shot-model">${modelInfo[s.model]?.name || s.model}</span>
+        <span>${s.duration}s · ${s.transition}</span>
+      </div>
+      ${s.charRef ? `<div style="font-size:.72rem;color:var(--accent);margin:.3rem 0"><i class="ti ti-user"></i> ${s.charRef.split(' — ')[0]}</div>` : ''}
+      <div class="shot-preview">${s.subject}</div>
+      <div class="shot-actions">
+		<button onclick="editMultiShot(${s.id})"><i class="ti ti-edit"></i> Edit</button>
+        <button onclick="copyMultishotPrompt(${i})"><i class="ti ti-copy"></i> Copy</button>
+        <button onclick="deleteMultiShot(${s.id})"><i class="ti ti-trash"></i> Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyMultishotPrompt(idx) {
+  if (multishots[idx]) {
+    navigator.clipboard.writeText(multishots[idx].fullPrompt);
+    alert('Copied!');
+  }
+}
+
+function deleteMultiShot(id) {
+  multishots = multishots.filter(s => s.id !== id);
+  localStorage.setItem('rodeoMultishots', JSON.stringify(multishots)); renderMultishots();
+}
+
+function exportStoryboard() {
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([JSON.stringify(multishots,null,2)], {type:'application/json'})),
+    download: 'rodeo-sequence.json'
+  }); a.click();
+}
+
+function clearStoryboard() {
+  if (confirm('Clear storyboard?')) { multishots=[]; localStorage.setItem('rodeoMultishots','[]'); renderMultishots(); }
+}
+
+// LIBRARY
+function openLibraryModal()  { document.getElementById('libraryModal').classList.add('active'); }
+function closeLibraryModal() { document.getElementById('libraryModal').classList.remove('active'); }
+function addToLibrary() {
+  const url=document.getElementById('libraryUrl').value.trim();
+  if(!url){alert('Enter a URL');return;}
+  library.push({id:Date.now(),url,prompt:document.getElementById('libraryPrompt').value});
+  localStorage.setItem('rodeoLibrary',JSON.stringify(library));closeLibraryModal();renderLibrary();
+}
+function renderLibrary() {
+  const grid=document.getElementById('libraryGrid');
+  const empty=document.getElementById('libraryEmpty');
+  if(!library.length){grid.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  grid.innerHTML=library.map(item=>`
+    <div class="library-item">
+      <img src="${item.url}" alt="" onerror="this.style.background='var(--bg-tertiary)'">
+      <button onclick="deleteFromLibrary(${item.id})" style="position:absolute;top:4px;right:4px;padding:3px 7px;background:rgba(0,0,0,.75);color:white;border:none;font-size:10px;border-radius:3px;cursor:pointer"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+function deleteFromLibrary(id) {
+  library=library.filter(i=>i.id!==id);
+  localStorage.setItem('rodeoLibrary',JSON.stringify(library));renderLibrary();
+}
+function exportLibrary() {
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([JSON.stringify(library,null,2)],{type:'application/json'})),download:'rodeo-library.json'});a.click();
+}
+// ── Folder Browser ───────────────────────────────────────────────────────────
+let folderFiles = [];
+
+function loadFolder(input) {
+  const files = Array.from(input.files).filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
+  if (!files.length) { alert('No images or videos found in that folder.'); return; }
+  folderFiles = files;
+
+  const section = document.getElementById('folderSection');
+  document.getElementById('folderName').textContent = files[0].webkitRelativePath.split('/')[0] || 'Folder';
+  document.getElementById('folderCount').textContent = '(' + files.length + ' files)';
+  section.style.display = 'block';
+  const cnt=document.getElementById('lwCount'); if(cnt) cnt.textContent=library.length+files.length;
+  if (document.getElementById('libWidget').classList.contains('open')) renderLibWidget();
+
+  const grid = document.getElementById('folderGrid');
+  grid.innerHTML = '<div class="folder-empty">Loading previews…</div>';
+
+  // Build thumbnails progressively
+  grid.innerHTML = '';
+  files.forEach((file, idx) => {
+    const url = URL.createObjectURL(file);
+    const div = document.createElement('div');
+    div.className = 'folder-thumb';
+    div.innerHTML = file.type.startsWith('video/')
+      ? `<video src="${url}" style="width:100%;height:100%;object-fit:cover" muted></video>
+         <div class="f-name">${file.name}</div>
+         <button class="f-add" onclick="addFolderItem(${idx})">+ Library</button>`
+      : `<img src="${url}" alt="${file.name}" loading="lazy" onclick="useFolderImage(${idx})" style="cursor:pointer">
+ <div class="f-name">${file.name}</div>
+ <div style="position:absolute;top:4px;right:4px;display:flex;gap:3px">
+   <button class="f-add-btn" style="opacity:1;position:static;font-size:.65rem;padding:2px 5px;background:var(--accent);color:#fff;border:none;border-radius:3px;cursor:pointer" onclick="useFolderImage(${idx})">📎 Use</button>
+   <button class="f-add-btn" style="opacity:1;position:static;font-size:.65rem;padding:2px 5px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);border-radius:3px;cursor:pointer" onclick="addFolderItem(${idx})">+ Lib</button>
+ </div>`
+    grid.appendChild(div);
+  });
+}
+
+function addFolderItem(idx) {
+  const file = folderFiles[idx];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  library.push({id: Date.now(), url, prompt: file.name});
+  try { localStorage.setItem('rodeoLibrary', JSON.stringify(library)); }
+  catch(e) { /* localStorage full — kept in memory only this session */ }
+  renderLibrary();
+  const btns = document.querySelectorAll('#folderGrid .f-add-btn');
+  if (btns[idx]) { btns[idx].textContent = '✓'; setTimeout(() => { if(btns[idx]) btns[idx].textContent = '+ Lib'; }, 1400); }
+}
+
+function useFolderImage(idx) {
+  const file = folderFiles[idx];
+  if (!file) return;
+  const subj = document.getElementById('subject');
+  const ref = file.name.replace(/\.[^.]+$/, ''); // strips extension
+  subj.value = subj.value ? subj.value + ', ' + ref : ref;
+  updateFullPrompt();
+  document.querySelectorAll('.tab-btn')[0].click(); // jump to Editor tab
+}
+
+function closeFolderSection() {
+  document.getElementById('folderSection').style.display = 'none';
+  document.getElementById('folderGrid').innerHTML = '';
+  folderFiles = [];
+  document.getElementById('folderInput').value = '';
+}
+
+function clearLibrary() {
+  if(confirm('Clear library?')){library=[];localStorage.setItem('rodeoLibrary','[]');renderLibrary();}
+}
+
+// SMART EDIT
+async function refineWithAI() {
+  const source=document.getElementById('smartEditSource').textContent;
+  const instr=document.getElementById('smartEditInput').value.trim();
+  if(!source||!instr){alert('Create a prompt and enter refinement');return;}
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span style="opacity:.7">Refining...</span>';
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,
+        messages:[{role:'user',content:`Refine this prompt:\n\n${source}\n\nRefinement: ${instr}\n\nProvide ONLY the refined prompt.`}]})
+    });
+    const data=await res.json();
+    document.getElementById('refinedPrompt').textContent=data.content[0].text;
+    document.getElementById('smartEditOutput').style.display='block';
+  } catch(err){alert('Error: '+err.message);}
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-sparkles"></i> Refine';
+}
+function acceptRefinement() {
+  document.getElementById('fullPrompt').textContent=document.getElementById('refinedPrompt').textContent;
+  document.getElementById('smartEditOutput').style.display='none';
+  document.querySelectorAll('.tab-btn')[0].click();
+}
+
+// WORKFLOW BUILDER
+function wfRefPreview(url) {
+  const img = document.getElementById('wfRefPreviewImg');
+  if (url) { img.src = url; img.style.display = 'block'; }
+  else { img.style.display = 'none'; img.src = ''; }
+}
+
+function wfPopulateLibPicker(currentUrl) {
+  const picker = document.getElementById('wfLibPicker');
+  if (!library.length) {
+    picker.innerHTML = '<p style="color:var(--text-muted);font-size:.78rem;grid-column:1/-1">No library images yet.</p>';
+    return;
+  }
+  picker.innerHTML = library.map(item => `
+    <div class="ms-lib-item${currentUrl===item.url?' selected':''}"
+         onclick="wfLibSelect(this,'${item.url}')"
+         title="${item.prompt||''}">
+      <img src="${item.url}" alt="" onerror="this.style.display='none'">
+    </div>`).join('');
+}
+
+function wfLibSelect(el, url) {
+  document.querySelectorAll('#wfLibPicker .ms-lib-item').forEach(e => e.classList.remove('selected'));
+  const refInput = document.getElementById('wfStepRef');
+  if (refInput.value === url) {
+    refInput.value = '';
+    wfRefPreview('');
+  } else {
+    el.classList.add('selected');
+    refInput.value = url;
+    wfRefPreview(url);
+  }
+}
+function wfAddStep() {
+  wfEditId=null;
+  document.getElementById('wfModalTitle').textContent='Add Workflow Step';
+  document.getElementById('wfSaveBtn').textContent='Add Step';
+  document.getElementById('wfStepName').value='';
+  document.getElementById('wfStepPrompt').value=document.getElementById('fullPrompt').textContent!=='Fill in the fields...'?document.getElementById('fullPrompt').textContent:'';
+  wfRefPreview(''); wfPopulateLibPicker('');
+  document.getElementById('wfStepDuration').value='5';
+  document.getElementById('wfStepNotes').value='';
+  document.getElementById('wfStepModal').classList.add('active');
+}
+function wfEditStep(id) {
+  const s=wfSteps.find(x=>x.id===id);if(!s)return;
+  wfEditId=id;
+  document.getElementById('wfModalTitle').textContent='Edit Step';
+  document.getElementById('wfSaveBtn').textContent='Save Changes';
+  document.getElementById('wfStepName').value=s.name;
+  document.getElementById('wfStepModel').value=s.model;
+  document.getElementById('wfStepPrompt').value=s.prompt;
+  wfRefPreview(s.ref||''); wfPopulateLibPicker(s.ref||'');
+  document.getElementById('wfStepDuration').value=s.duration||5;
+  document.getElementById('wfStepTransition').value=s.transition||'cut';
+  document.getElementById('wfStepNotes').value=s.notes||'';
+  document.getElementById('wfStepModal').classList.add('active');
+}
+function closeWfModal() { document.getElementById('wfStepModal').classList.remove('active'); }
+function wfSaveStep() {
+  const name=document.getElementById('wfStepName').value.trim()||'Untitled Step';
+  const model=document.getElementById('wfStepModel').value;
+  const prompt=document.getElementById('wfStepPrompt').value.trim();
+  const ref=document.getElementById('wfStepRef').value.trim();
+  const duration=parseInt(document.getElementById('wfStepDuration').value)||5;
+  const transition=document.getElementById('wfStepTransition').value;
+  const notes=document.getElementById('wfStepNotes').value.trim();
+  if(!prompt){alert('Prompt is required');return;}
+  if(wfEditId!==null) {
+    const idx=wfSteps.findIndex(x=>x.id===wfEditId);
+    if(idx>-1)wfSteps[idx]={...wfSteps[idx],name,model,prompt,ref,duration,transition,notes};
+  } else {
+    wfSteps.push({id:Date.now(),name,model,prompt,ref,duration,transition,notes});
+  }
+  localStorage.setItem('rodeoWorkflow',JSON.stringify(wfSteps));
+  closeWfModal();renderWorkflow();
+}
+function wfDeleteStep(id) {
+  wfSteps=wfSteps.filter(x=>x.id!==id);
+  localStorage.setItem('rodeoWorkflow',JSON.stringify(wfSteps));renderWorkflow();
+}
+function wfMoveStep(id, dir) {
+  const idx=wfSteps.findIndex(x=>x.id===id);
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=wfSteps.length)return;
+  [wfSteps[idx],wfSteps[newIdx]]=[wfSteps[newIdx],wfSteps[idx]];
+  localStorage.setItem('rodeoWorkflow',JSON.stringify(wfSteps));renderWorkflow();
+}
+function renderWorkflow() {
+  const el=document.getElementById('wfStepsList');
+  if(!wfSteps.length){el.innerHTML='<div class="wf-empty"><i class="ti ti-sitemap" style="font-size:48px;opacity:.3;display:block;margin-bottom:1rem"></i>No steps yet. Click <strong>Add Step</strong> to start building your workflow.</div>';return;}
+  el.innerHTML=wfSteps.map((s,i)=>`
+    ${i>0?`<div class="wf-connector"><span>↓ ${wfSteps[i-1].transition||'cut'} → ${s.duration}s</span></div>`:''}
+    <div class="wf-step">
+      <div class="wf-step-header">
+        <div class="wf-step-num">${i+1}</div>
+        <div class="wf-step-title">${s.name} <span style="font-size:.72rem;color:var(--accent);font-weight:400">[${modelInfo[s.model]?.name||s.model}]</span></div>
+        <div class="wf-step-actions">
+          <button onclick="wfMoveStep(${s.id},-1)" ${i===0?'disabled':''} title="Move up" style="padding:.3rem .5rem"><i class="ti ti-arrow-up"></i>Up</button>
+          <button onclick="wfMoveStep(${s.id},1)" ${i===wfSteps.length-1?'disabled':''} title="Move down" style="padding:.3rem .5rem"><i class="ti ti-arrow-down"></i>Down</button>
+          <button onclick="wfEditStep(${s.id})" style="padding:.3rem .6rem;font-size:.75rem;border-color:#2bbe18;color:#2bbe18"><i class="ti ti-edit"></i>Edit</button>
+          <button onclick="wfDeleteStep(${s.id})" style="padding:.3rem .6rem;font-size:.75rem;border-color:#e53e3e;color:#e53e3e"><i class="ti ti-trash"></i> Del</button>
+        </div>
+      </div>
+      <div style="font-size:.8rem;color:var(--text-secondary);line-height:1.55;background:var(--bg-primary);border-radius:6px;padding:.7rem;margin-bottom:${s.ref||s.notes?'.6rem':'0'}">${s.prompt}</div>
+      ${s.ref?`<div style="margin-bottom:.5rem">
+  <img src="${s.ref}" alt="ref" onerror="this.style.display='none'" style="width:100%;max-height:140px;object-fit:cover;border-radius:6px;display:block;margin-bottom:.35rem;border:1px solid var(--border)">
+  <div style="font-size:.75rem;color:var(--text-tertiary)">🖼 Ref: <a href="${s.ref}" target="_blank" style="color:var(--accent)">${s.ref.length>50?s.ref.slice(0,50)+'…':s.ref}</a></div>
+</div>`:''}
+      ${s.notes?`<div style="font-size:.75rem;color:var(--text-tertiary);font-style:italic">📝 ${s.notes}</div>`:''}
+    </div>`).join('');
+  document.getElementById('wfExportBox').style.display='none';
+}
+function wfExportText() {
+  if(!wfSteps.length){alert('No steps to export');return;}
+  const lines=wfSteps.map((s,i)=>[
+    `═══ STEP ${i+1}: ${s.name} [${modelInfo[s.model]?.name||s.model}] ═══`,
+    s.prompt,
+    s.ref?`Reference: ${s.ref}`:'',
+    s.notes?`Notes: ${s.notes}`:'',
+    i<wfSteps.length-1?`↓ ${s.transition||'cut'} (${s.duration}s)`:''
+  ].filter(Boolean).join('\n'));
+  document.getElementById('wfExportContent').textContent=lines.join('\n\n');
+  document.getElementById('wfExportBox').style.display='block';
+}
+function wfExportJSON() {
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([JSON.stringify(wfSteps,null,2)],{type:'application/json'})),download:'rodeo-workflow.json'});a.click();
+}
+function wfCopyExport() {
+  navigator.clipboard.writeText(document.getElementById('wfExportContent').textContent);
+  alert('Copied!');
+}
+function wfClear() {
+  if(confirm('Clear entire workflow?')){wfSteps=[];localStorage.setItem('rodeoWorkflow','[]');renderWorkflow();document.getElementById('wfExportBox').style.display='none';}
+}
+
+// ── Foldable sidebar panels ──────────────────────────────────────────────────
+function toggleFold(h3) {
+  const body  = h3.nextElementSibling;
+  const arrow = h3.querySelector('.fold-arrow');
+  if (!body) return;
+  const isOpen = body.style.maxHeight !== '0px';
+  if (isOpen) {
+    body.style.maxHeight     = '0';
+    body.style.opacity       = '0';
+    body.style.marginTop     = '0';
+    body.style.pointerEvents = 'none';
+    if (arrow) { arrow.style.transform = 'rotate(-90deg)'; arrow.style.color = '#888'; }
+  } else {
+    body.style.maxHeight     = body.scrollHeight + 2000 + 'px';
+    body.style.opacity       = '1';
+    body.style.marginTop     = '';
+    body.style.pointerEvents = '';
+    if (arrow) { arrow.style.transform = 'rotate(0deg)'; arrow.style.color = '#ff6b5b'; }
+  }
+  const key = 'fold_' + h3.textContent.replace(/[^a-z0-9]/gi,'').substring(0,14);
+  localStorage.setItem(key, isOpen ? '1' : '0');
+}
+
+
+// ── @mention system ──────────────────────────────────────────────────────────
+let atField = null, atStart = -1;
+
+function atCheck(e) {
+  const field = e.target;
+  const val   = field.value;
+  const cur   = field.selectionStart;
+  const before = val.substring(0, cur);
+  const atIdx  = before.lastIndexOf('@');
+  if (atIdx === -1) { atHide(); return; }
+  const query = before.substring(atIdx + 1);
+  if (/\s/.test(query)) { atHide(); return; }          // space → close
+  const matches = characters.filter(c =>
+    c.name.toLowerCase().includes(query.toLowerCase())
+  );
+  if (!matches.length) { atHide(); return; }
+  atField = field; atStart = atIdx;
+  atShow(matches, field);
+}
+
+function atShow(chars, field) {
+  const dd = document.getElementById('atDropdown');
+  dd.innerHTML = chars.map(c => {
+    const ci = characters.indexOf(c);
+    const av = c.image
+      ? `<img class="at-avatar" src="${c.image}">`
+      : `<div class="at-avatar-ph">🎭</div>`;
+    const desc = c.description
+      ? `<div class="at-desc">${c.description.substring(0,70)}${c.description.length>70?'…':''}</div>`
+      : '';
+    return `<div class="at-item" onmousedown="atPick(${ci})">${av}<div><div class="at-name">${c.name}</div>${desc}</div></div>`;
+  }).join('');
+  const rect = field.getBoundingClientRect();
+  // position below the field, left-aligned
+  dd.style.left = rect.left + 'px';
+  dd.style.top  = (rect.bottom + 4) + 'px';
+  dd.style.display = 'block';
+}
+
+function atPick(ci) {
+  if (!atField) return;
+  const c   = characters[ci];
+  const val = atField.value;
+  const cur = atField.selectionStart;
+  const before = val.substring(0, atStart);
+  const after  = val.substring(cur);
+  // Insert: Name – description (if any)
+  const insert = c.description ? `${c.name} – ${c.description}` : c.name;
+  atField.value = before + insert + after;
+  const pos = before.length + insert.length;
+  atField.setSelectionRange(pos, pos);
+  atField.focus();
+  atHide();
+  updateFullPrompt();
+}
+
+function atHide() {
+  document.getElementById('atDropdown').style.display = 'none';
+  atField = null; atStart = -1;
+}
+
+// Close on Escape or outside click
+document.addEventListener('keydown', e => { if (e.key === 'Escape') atHide(); });
+document.addEventListener('mousedown', e => {
+  if (!e.target.closest('#atDropdown')) atHide();
+});
+
+['subject','composition','lighting','camera','style','cameraBody','lensBody'].forEach(id=>
+  document.getElementById(id).addEventListener('input',updateFullPrompt));
+
+// @mention: attach to fields where characters are relevant
+['subject','composition','lighting'].forEach(id =>
+  document.getElementById(id).addEventListener('input', atCheck));
+
+renderCameras();renderLenses();renderMovieStyles();renderAngles();renderSizeViews();renderFramingViews();renderMovements();
+updateModelSyntax();renderCharacters();renderMultishots();renderLibrary();renderWorkflow();
+
+</script>
+<div id="atDropdown" class="at-dropdown"></div>
+<footer style="
+    padding:1.5rem 0 2rem;
+    margin-top:.0,1rem;
+">
+  <div style="max-width:1400px;margin:0 auto;padding:0 2rem">
+  <div style="display:flex;align-items:center;gap:1.1rem">
+    <a href="http://www.rodeoclip.com" target="_blank">
+      <img src="images/rodeo-footer.png" alt="RODEO CLIP - Eye Candy Prompt Machine">
+    </a>
+    <div>
+	  <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px;margin-bottom:.0rem">
+        All rights reserved | <a href="http://www.rodeoclip.com" target="_blank">RODEO Clip</a> &copy; 2026
+      </div>
+	  <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px">
+        RC Eye Candy Prompt Machine | Powered by <a href="https://claude.ai" target="_blank">Claude</a> | Operated by <a href="http://www.vorticoso.com" target="_blank">Vorticoso</a>
+      </div>
+    </div>
+  </div>
+  </div>
+</footer>
+</body>
+</html>
+<!-- ══════════════════════════════════════════════════════════════════════════════════
+     RC Eye Candy Prompt Machine V1.0 | Powered by Claude and operated by Vorticoso.Com
+     All rights reserved | RodeoClip.Com © 2026
+     ══════════════════════════════════════════════════════════════════════════════ -->
