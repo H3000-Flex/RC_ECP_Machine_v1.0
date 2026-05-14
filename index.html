@@ -125,6 +125,16 @@ button.primary{background:var(--accent);color:white;border-color:var(--accent)}
 button.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
 button.danger{background:transparent;border-color:#e53e3e;color:#e53e3e}
 button.danger:hover{background:rgba(229,62,62,.1)}
+/* Delete button: faded grey at rest, red on hover */
+button.btn-del{background:transparent;border-color:rgba(160,168,184,0.35);color:var(--text-tertiary)}
+button.btn-del:hover{background:rgba(229,62,62,.1);border-color:#e53e3e;color:#e53e3e}
+/* Library unified section headers */
+.lib-section{margin-top:2rem}
+.lib-section:first-child{margin-top:0}
+.lib-section-header{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.lib-section-header h3{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-secondary);margin:0}
+.lib-section-header .lib-section-count{font-size:.75rem;color:var(--text-tertiary);font-weight:400}
+.lib-section-empty{color:var(--text-tertiary);font-size:.82rem;padding:.5rem 0;font-style:italic}
 .preset-card h3 .fold-arrow { color: #ff6b5b; }
 .preset-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
 .preset-card h3{font-size:.82rem;margin-bottom:0;color:var(--text-secondary);display:flex;align-items:center;gap:.4rem;cursor:pointer;user-select:none;justify-content:space-between;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:6px;padding:.55rem .85rem;transition:border-color .2s,color .2s}
@@ -158,6 +168,15 @@ button.danger:hover{background:rgba(229,62,62,.1)}
 .timeline-arrow{color:var(--text-tertiary);font-size:18px}
 .info-box{background:rgba(255,107,91,.1);border:1px solid var(--accent);border-radius:8px;padding:.9rem;font-size:.88rem;color:var(--text-secondary);margin-bottom:1.5rem}
 .library-grid{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
+/* Folder / Images photo grid */
+.folder-photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;margin-bottom:2rem}
+.folder-vignette{display:flex;flex-direction:column;gap:.35rem}
+.folder-vignette-img{position:relative;aspect-ratio:1;overflow:hidden;border-radius:8px;border:1px solid var(--border);cursor:zoom-in;transition:border-color .2s}
+.folder-vignette-img:hover{border-color:var(--accent)}
+.folder-vignette-img img,.folder-vignette-img video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.folder-vignette-img:hover img,.folder-vignette-img:hover video{transform:scale(1.06)}
+.folder-vignette-btns{display:flex;gap:.3rem}
+.folder-vignette-btns button{flex:1;font-size:.7rem;padding:.28rem .3rem;justify-content:center}
 .library-item{aspect-ratio:1;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:all .3s}
 .library-item:hover{border-color:var(--accent)}
 .library-item img{width:100%;height:100%;object-fit:cover}
@@ -173,7 +192,7 @@ button.danger:hover{background:rgba(229,62,62,.1)}
 .lib-card-image:hover .lib-add-img-btn{opacity:1}
 .lib-card-prompt{padding:1rem;display:flex;flex-direction:column;gap:.5rem;overflow:hidden}
 .lib-card-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-.lib-model-badge{background:var(--accent-dark,rgba(255,107,91,.15));color:var(--accent);padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.lib-model-badge{background:var(--accent-dark,rgba(255,107,91,.15));color:#fff;padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .lib-date{font-size:.72rem;color:var(--text-tertiary)}
 .lib-prompt-text{flex:1;font-size:.82rem;line-height:1.5;color:var(--text-secondary);overflow-y:auto;max-height:140px;white-space:pre-wrap;word-break:break-word}
 .lib-card-actions{display:flex;gap:.5rem;flex-wrap:wrap}
@@ -429,9 +448,9 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
     <div class="tab-dropdown">
       <button class="tab-btn" onclick="switchTab('library',this)"><i class="ti ti-photo"></i> Library</button>
       <div class="tab-submenu">
-        <button onclick="setLibraryFilter('all')" class="active">All</button>
-        <button onclick="setLibraryFilter('images')">Images Only</button>
-        <button onclick="setLibraryFilter('prompts')">Prompts Only</button>
+        <button onclick="setLibraryFilter('images')" class="active">Images</button>
+        <button onclick="setLibraryFilter('prompts')">Prompts</button>
+        <button onclick="setLibraryFilter('folder')">Folder</button>
       </div>
     </div>
     <button class="tab-btn" onclick="switchTab('smartedit',this)"><i class="ti ti-sparkles"></i> Smart Edit</button>
@@ -645,25 +664,15 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
   <!-- LIBRARY TAB -->
   <div id="tab-library" class="tab-content">
     <div class="card-section">
-      <h2>Image Library</h2>
+      <h2>Library</h2>
       <div class="button-group">
         <button class="primary" onclick="openLibraryModal()"><i class="ti ti-plus"></i> Add from URL</button>
-        <button onclick="document.getElementById('folderInput').click()"><i class="ti ti-folder-open"></i> Open Folder</button>
+        <button class="primary" onclick="document.getElementById('folderInput').click()"><i class="ti ti-folder-open"></i> Open Folder</button>
         <button onclick="exportLibrary()"><i class="ti ti-download"></i> Export</button>
-        <button onclick="clearLibrary()"><i class="ti ti-trash"></i> Clear</button>
+        <button onclick="clearLibrary()"><i class="ti ti-trash"></i> Clear All</button>
       </div>
       <input type="file" id="folderInput" webkitdirectory multiple accept="image/*,video/*" style="display:none" onchange="loadFolder(this)">
-      <div id="libraryEmpty" class="empty-state"><i class="ti ti-photo"></i><p>No images yet.</p></div>
-      <div id="libraryGrid" class="library-grid"></div>
-
-      <!-- Folder Browser Section -->
-      <div id="folderSection" class="folder-section" style="display:none">
-        <div class="folder-header">
-          <div class="folder-title"><i class="ti ti-folder"></i> <span id="folderName">Folder</span> <span id="folderCount" style="color:var(--text-muted);font-weight:400"></span></div>
-          <button onclick="closeFolderSection()" style="font-size:.75rem;padding:.25rem .6rem"><i class="ti ti-x"></i> Close</button>
-        </div>
-        <div id="folderGrid" class="folder-grid"></div>
-      </div>
+      <div id="libraryContent"></div>
     </div>
   </div>
 
@@ -1022,7 +1031,7 @@ let selSizes   = new Set();
 let selFraming = new Set();
 let selMovements = new Set();
 let wfEditId   = null;
-let libraryFilter = 'all';
+let libraryFilter = 'images';
 let refImageUrl = '';
 
 const modelInfo = {
@@ -1282,11 +1291,21 @@ function copyPrompt() {
 
 function setLibraryFilter(filter) {
   libraryFilter = filter;
+  // Update active state on submenu buttons
   document.querySelectorAll('.tab-submenu button').forEach(b => b.classList.remove('active'));
   if (event && event.target) event.target.classList.add('active');
-  renderLibrary();
+  // Switch to library tab
   const libBtn = document.querySelector('.tab-dropdown .tab-btn');
   switchTab('library', libBtn);
+  renderLibrary();
+  // Scroll to the matching section
+  const secMap = { images: 'lib-sec-images', prompts: 'lib-sec-prompts', folder: 'lib-sec-folder' };
+  if (secMap[filter]) {
+    setTimeout(() => {
+      const el = document.getElementById(secMap[filter]);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
+  }
 }
 
 function updateRefImagePanel() {
@@ -1326,6 +1345,10 @@ function setRefImage(url) {
   document.getElementById('refBtnRow').style.display = 'flex';
   updateRefImagePanel();
   updateFullPrompt();
+  // Persist (skip blob: URLs — they die with the session)
+  try {
+    if (url && !url.startsWith('blob:')) localStorage.setItem('rodeoRefImage', url);
+  } catch(e) {}
 }
 
 function clearRefImage() {
@@ -1335,6 +1358,14 @@ function clearRefImage() {
   document.getElementById('refBtnRow').style.display = 'none';
   updateRefImagePanel();
   updateFullPrompt();
+  try { localStorage.removeItem('rodeoRefImage'); } catch(e) {}
+}
+
+function _restoreRefFromStorage() {
+  try {
+    const url = localStorage.getItem('rodeoRefImage');
+    if (url) setRefImage(url);
+  } catch(e) {}
 }
 
 function previewRefImage() {
@@ -1736,7 +1767,8 @@ function copyLibPrompt(id) {
 function useLibPrompt(id) {
   const item = library.find(i => i.id === id);
   if (!item) return;
-  document.getElementById('fullPrompt').textContent = item.prompt;
+  if (item.prompt) document.getElementById('fullPrompt').textContent = item.prompt;
+  if (item.url) setRefImage(item.url);
   const editorBtn = [...document.querySelectorAll('.tab-btn')].find(b => b.textContent.includes('Editor'));
   if (editorBtn) switchTab('editor', editorBtn);
 }
@@ -1756,50 +1788,92 @@ function addToLibrary() {
   renderLibrary();
 }
 function renderLibrary() {
-  const grid = document.getElementById('libraryGrid');
-  const empty = document.getElementById('libraryEmpty');
-  if (!library.length) {
-    empty.innerHTML = '<i class="ti ti-photo"></i><p>No items saved yet.</p>';
-    empty.style.display = '';
-    grid.innerHTML = '';
-    return;
-  }
-  let items = [...library].reverse();
-  if (libraryFilter === 'images') items = items.filter(i => i.url && i.url.trim());
-  if (libraryFilter === 'prompts') items = items.filter(i => i.prompt && i.prompt.trim());
-  if (!items.length) {
-    const msg = libraryFilter === 'images' ? 'No images saved yet.' : libraryFilter === 'prompts' ? 'No prompts saved yet.' : 'No items saved yet.';
-    empty.innerHTML = '<i class="ti ti-photo"></i><p>' + msg + '</p>';
-    empty.style.display = '';
-    grid.innerHTML = '';
-    return;
-  }
-  empty.style.display = 'none';
-  grid.innerHTML = items.map(item => `
-    <div class="lib-card" data-id="${item.id}">
-      <div class="lib-card-image">
-        ${item.url
-          ? `<img src="${item.url}" alt="ref" onclick="selectLibImage(${item.id})">`
-          : `<div class="lib-img-placeholder"><i class="ti ti-photo-off"></i><span>No image</span></div>`
-        }
-        <button class="lib-add-img-btn" onclick="openLibraryModalFor(${item.id})" title="Add image">
-          <i class="ti ti-camera-plus"></i>
-        </button>
+  const container = document.getElementById('libraryContent');
+  if (!container) return;
+
+  // ── Section 1: Images ──
+  const imgItems = [...library].reverse().filter(i => i.url && i.url.trim());
+  const imgHtml = imgItems.length
+    ? `<div class="folder-photo-grid">${imgItems.map(item => `
+        <div class="folder-vignette" data-id="${item.id}">
+          <div class="folder-vignette-img" onclick="openLibLightboxById(${item.id})">
+            <img src="${item.url}" alt="" loading="lazy">
+          </div>
+          <div class="folder-vignette-btns">
+            <button onclick="useLibPrompt(${item.id})"><i class="ti ti-arrow-back-up"></i> Use</button>
+            <button onclick="copyLibPrompt(${item.id})"><i class="ti ti-copy"></i> Copy</button>
+            <button class="btn-del" onclick="deleteFromLibrary(${item.id})"><i class="ti ti-trash"></i> Delete</button>
+          </div>
+        </div>`).join('')}</div>`
+    : `<p class="lib-section-empty">No images saved yet. Add images from URL or save from a folder.</p>`;
+
+  // ── Section 2: Prompts ──
+  const promptItems = [...library].reverse().filter(i => i.prompt && i.prompt.trim());
+  const promptHtml = promptItems.length
+    ? `<div class="library-grid">${promptItems.map(item => `
+        <div class="lib-card" data-id="${item.id}">
+          <div class="lib-card-image">
+            ${item.url
+              ? `<img src="${item.url}" alt="ref" onclick="openLibLightboxById(${item.id})" style="cursor:zoom-in">`
+              : `<div class="lib-img-placeholder"><i class="ti ti-photo-off"></i><span>No image</span></div>`
+            }
+            <button class="lib-add-img-btn" onclick="openLibraryModalFor(${item.id})" title="Add image">
+              <i class="ti ti-camera-plus"></i>
+            </button>
+          </div>
+          <div class="lib-card-prompt">
+            <div class="lib-card-meta">
+              <span class="lib-model-badge">${item.model || 'Prompt'}</span>
+              <span class="lib-date">${item.date || ''}</span>
+            </div>
+            <div class="lib-prompt-text">${item.prompt || '<em style="opacity:.5">No prompt</em>'}</div>
+            <div class="lib-card-actions">
+              <button onclick="copyLibPrompt(${item.id})" title="Copy prompt"><i class="ti ti-copy"></i> Copy</button>
+              <button onclick="useLibPrompt(${item.id})" title="Use in editor"><i class="ti ti-arrow-back-up"></i> Use</button>
+              <button class="btn-del" onclick="deleteFromLibrary(${item.id})"><i class="ti ti-trash"></i> Delete</button>
+            </div>
+          </div>
+        </div>`).join('')}</div>`
+    : `<p class="lib-section-empty">No prompts saved yet. Generate a prompt in the Editor and save it.</p>`;
+
+  // ── Section 3: Folder ──
+  const folderHtml = folderFiles.length
+    ? `<div class="folder-photo-grid">${folderFiles.map((file, idx) => `
+        <div class="folder-vignette" data-folder-idx="${idx}">
+          <div class="folder-vignette-img" onclick="openFolderLightbox(${idx})">
+            ${file.type.startsWith('video/')
+              ? `<video src="${folderUrls[idx]}" muted></video>`
+              : `<img src="${folderUrls[idx]}" alt="" loading="lazy">`}
+          </div>
+          <div class="folder-vignette-btns">
+            <button onclick="useFolderImage(${idx})"><i class="ti ti-photo"></i> Use</button>
+            <button class="folder-save-btn" onclick="addFolderItem(${idx})"><i class="ti ti-bookmark"></i> Save</button>
+          </div>
+        </div>`).join('')}</div>`
+    : `<p class="lib-section-empty">No folder loaded. Click <strong>Open Folder</strong> above to browse local images.</p>`;
+
+  container.innerHTML = `
+    <div class="lib-section" id="lib-sec-images">
+      <div class="lib-section-header">
+        <h3><i class="ti ti-photo" style="margin-right:.3rem"></i>Images</h3>
+        <span class="lib-section-count">${imgItems.length} item${imgItems.length !== 1 ? 's' : ''}</span>
       </div>
-      <div class="lib-card-prompt">
-        <div class="lib-card-meta">
-          <span class="lib-model-badge">${item.model || 'Prompt'}</span>
-          <span class="lib-date">${item.date || ''}</span>
-        </div>
-        <div class="lib-prompt-text">${item.prompt || '<em style="opacity:.5">No prompt</em>'}</div>
-        <div class="lib-card-actions">
-          <button onclick="copyLibPrompt(${item.id})" title="Copy prompt"><i class="ti ti-copy"></i> Copy</button>
-          <button onclick="useLibPrompt(${item.id})" title="Use in editor"><i class="ti ti-arrow-back-up"></i> Use</button>
-          <button onclick="deleteFromLibrary(${item.id})" title="Delete" style="color:#e57373"><i class="ti ti-trash"></i></button>
-        </div>
-      </div>
+      ${imgHtml}
     </div>
-  `).join('');
+    <div class="lib-section" id="lib-sec-prompts">
+      <div class="lib-section-header">
+        <h3><i class="ti ti-align-left" style="margin-right:.3rem"></i>Prompts</h3>
+        <span class="lib-section-count">${promptItems.length} item${promptItems.length !== 1 ? 's' : ''}</span>
+      </div>
+      ${promptHtml}
+    </div>
+    <div class="lib-section" id="lib-sec-folder">
+      <div class="lib-section-header">
+        <h3><i class="ti ti-folder" style="margin-right:.3rem"></i>Folder${folderName ? ' / ' + folderName : ''}</h3>
+        <span class="lib-section-count">${folderFiles.length} item${folderFiles.length !== 1 ? 's' : ''}</span>
+      </div>
+      ${folderHtml}
+    </div>`;
 }
 function deleteFromLibrary(id) {
   library=library.filter(i=>i.id!==id);
@@ -1810,62 +1884,162 @@ function exportLibrary() {
 }
 // ── Folder Browser ───────────────────────────────────────────────────────────
 let folderFiles = [];
+let folderUrls  = [];
+let folderName  = '';
+
+// ── IndexedDB persistence for folder (no size limits unlike localStorage) ────
+function _openFolderDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('rodeoDB', 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('folder')) db.createObjectStore('folder');
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+async function _saveFolderToCache(files) {
+  try {
+    const db = await _openFolderDB();
+    await new Promise((res, rej) => {
+      const tx = db.transaction('folder', 'readwrite');
+      const st = tx.objectStore('folder');
+      st.clear();
+      // Store metadata separately so we know how many blobs to fetch on restore
+      st.put({ name: folderName, files: files.map(f => ({ name: f.name, type: f.type })) }, '_meta');
+      // Store each File as a raw Blob — IndexedDB handles binary natively, no base64 bloat
+      files.forEach((file, i) => st.put(file, `f${i}`));
+      tx.oncomplete = res;
+      tx.onerror    = () => rej(tx.error);
+    });
+    db.close();
+  } catch(e) { console.warn('Folder cache save failed:', e); }
+}
+
+async function _restoreFolderFromCache() {
+  try {
+    const db = await _openFolderDB();
+    // Read meta first
+    const meta = await new Promise((res, rej) => {
+      const tx = db.transaction('folder', 'readonly');
+      const r  = tx.objectStore('folder').get('_meta');
+      r.onsuccess = () => res(r.result);
+      r.onerror   = () => rej(r.error);
+    });
+    if (!meta || !meta.files || !meta.files.length) { db.close(); return; }
+    // Read all blobs in parallel (each gets its own readonly transaction — safe)
+    const blobs = await Promise.all(meta.files.map((_, i) => new Promise((res, rej) => {
+      const tx = db.transaction('folder', 'readonly');
+      const r  = tx.objectStore('folder').get(`f${i}`);
+      r.onsuccess = () => res(r.result);
+      r.onerror   = () => rej(r.error);
+    })));
+    db.close();
+    // Reconstruct File objects from stored Blobs
+    const files = blobs
+      .map((blob, i) => blob ? new File([blob], meta.files[i].name, { type: meta.files[i].type }) : null)
+      .filter(Boolean);
+    if (!files.length) return;
+    folderUrls.forEach(u => { if (u && u.startsWith('blob:')) URL.revokeObjectURL(u); });
+    folderName  = meta.name;
+    folderFiles = files;
+    folderUrls  = files.map(f => URL.createObjectURL(f));
+    renderLibrary();
+  } catch(e) { console.warn('Folder restore failed:', e); }
+}
 
 function loadFolder(input) {
   const files = Array.from(input.files).filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
   if (!files.length) { alert('No images or videos found in that folder.'); return; }
+  folderUrls.forEach(u => { if (u && u.startsWith('blob:')) URL.revokeObjectURL(u); });
   folderFiles = files;
-
-  const section = document.getElementById('folderSection');
-  document.getElementById('folderName').textContent = files[0].webkitRelativePath.split('/')[0] || 'Folder';
-  document.getElementById('folderCount').textContent = '(' + files.length + ' files)';
-  section.style.display = 'block';
-  const cnt=document.getElementById('lwCount'); if(cnt) cnt.textContent=library.length+files.length;
-  if (document.getElementById('libWidget').classList.contains('open')) renderLibWidget();
-
-  const grid = document.getElementById('folderGrid');
-  grid.innerHTML = '<div class="folder-empty">Loading previews…</div>';
-
-  // Build thumbnails progressively
-  grid.innerHTML = '';
-  files.forEach((file, idx) => {
-    const url = URL.createObjectURL(file);
-    const div = document.createElement('div');
-    div.className = 'folder-thumb';
-    div.innerHTML = file.type.startsWith('video/')
-      ? `<video src="${url}" style="width:100%;height:100%;object-fit:cover" muted></video>
-         <div class="f-name">${file.name}</div>
-         <button class="f-add" onclick="addFolderItem(${idx})">+ Library</button>`
-      : `<img src="${url}" alt="${file.name}" loading="lazy" onclick="useFolderImage(${idx})" style="cursor:pointer">
- <div class="f-name">${file.name}</div>
- <div style="position:absolute;top:4px;right:4px;display:flex;gap:3px">
-   <button class="f-add-btn" style="opacity:1;position:static;font-size:.65rem;padding:2px 5px;background:var(--accent);color:#fff;border:none;border-radius:3px;cursor:pointer" onclick="useFolderImage(${idx})">📎 Use</button>
-   <button class="f-add-btn" style="opacity:1;position:static;font-size:.65rem;padding:2px 5px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border);border-radius:3px;cursor:pointer" onclick="addFolderItem(${idx})">+ Lib</button>
- </div>`
-    grid.appendChild(div);
-  });
+  folderUrls  = files.map(f => URL.createObjectURL(f));
+  folderName  = files[0].webkitRelativePath.split('/')[0] || 'Folder';
+  const libBtn = document.querySelector('.tab-dropdown .tab-btn');
+  switchTab('library', libBtn);
+  renderLibrary();
+  setTimeout(() => {
+    const el = document.getElementById('lib-sec-folder');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
+  // Persist to IndexedDB in the background — no size limits
+  _saveFolderToCache(files);
 }
 
 function addFolderItem(idx) {
   const file = folderFiles[idx];
   if (!file) return;
-  const url = URL.createObjectURL(file);
-  library.push({id: Date.now(), url, prompt: file.name});
-  try { localStorage.setItem('rodeoLibrary', JSON.stringify(library)); }
-  catch(e) { /* localStorage full — kept in memory only this session */ }
-  renderLibrary();
-  const btns = document.querySelectorAll('#folderGrid .f-add-btn');
-  if (btns[idx]) { btns[idx].textContent = '✓'; setTimeout(() => { if(btns[idx]) btns[idx].textContent = '+ Lib'; }, 1400); }
+  const btn = document.querySelector(`[data-folder-idx="${idx}"] .folder-save-btn`);
+  if (btn) { btn.innerHTML = '<i class="ti ti-loader"></i> Saving…'; btn.disabled = true; }
+
+  const _commit = dataUrl => {
+    library.push({ id: Date.now(), url: dataUrl, prompt: file.name });
+    try { localStorage.setItem('rodeoLibrary', JSON.stringify(library)); } catch(err) {}
+    if (btn) { btn.innerHTML = '<i class="ti ti-check"></i> Saved'; setTimeout(() => { btn.innerHTML = '<i class="ti ti-bookmark"></i> Save'; btn.disabled = false; }, 1400); }
+    renderLibrary();
+  };
+
+  // If folderUrls already holds a data URL (from cache restore), use it directly
+  if (folderUrls[idx] && folderUrls[idx].startsWith('data:')) {
+    _commit(folderUrls[idx]);
+    return;
+  }
+  // Otherwise read from the actual File object
+  const reader = new FileReader();
+  reader.onload  = e => _commit(e.target.result);
+  reader.onerror = () => { if (btn) { btn.innerHTML = '<i class="ti ti-bookmark"></i> Save'; btn.disabled = false; } };
+  reader.readAsDataURL(file);
+}
+
+function _buildLightbox(mediaHtml, caption) {
+  const existing = document.getElementById('_lb');
+  if (existing) existing.remove();
+  const lb = document.createElement('div');
+  lb.id = '_lb';
+  lb.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:2000;display:flex;align-items:center;justify-content:center;';
+  lb.innerHTML = `
+    <button onclick="document.getElementById('_lb').remove()" style="position:absolute;top:1rem;right:1.25rem;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.5rem;line-height:1;cursor:pointer;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;z-index:1">&times;</button>
+    ${mediaHtml}
+    ${caption ? `<div style="position:absolute;bottom:1.1rem;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.55);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80vw;">${caption}</div>` : ''}`;
+  lb.addEventListener('click', e => { if (e.target === lb) lb.remove(); });
+  document.body.appendChild(lb);
+}
+
+function openFolderLightbox(idx) {
+  const file = folderFiles[idx];
+  const url  = folderUrls[idx];
+  if (!file || !url) return;
+  const prev = `<button onclick="event.stopPropagation();folderLightboxNav(${idx - 1})" style="position:absolute;left:1rem;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.8rem;cursor:pointer;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center">&#8249;</button>`;
+  const next = `<button onclick="event.stopPropagation();folderLightboxNav(${idx + 1})" style="position:absolute;right:1rem;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.8rem;cursor:pointer;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center">&#8250;</button>`;
+  const media = file.type.startsWith('video/')
+    ? `<video src="${url}" controls autoplay style="max-width:90vw;max-height:88vh;border-radius:6px;" onclick="event.stopPropagation()"></video>`
+    : `<img src="${url}" style="max-width:90vw;max-height:88vh;object-fit:contain;border-radius:6px;cursor:default;" onclick="event.stopPropagation()">`;
+  _buildLightbox(prev + media + next, file.name);
+}
+
+function folderLightboxNav(idx) {
+  const clamped = Math.max(0, Math.min(folderFiles.length - 1, idx));
+  openFolderLightbox(clamped);
+}
+
+function openLibLightbox(url) {
+  if (!url) return;
+  _buildLightbox(`<img src="${url}" style="max-width:90vw;max-height:88vh;object-fit:contain;border-radius:6px;cursor:default;" onclick="event.stopPropagation()">`, '');
+}
+
+function openLibLightboxById(id) {
+  const item = library.find(i => i.id === id);
+  if (item && item.url) openLibLightbox(item.url);
 }
 
 function useFolderImage(idx) {
-  const file = folderFiles[idx];
-  if (!file) return;
-  const subj = document.getElementById('subject');
-  const ref = file.name.replace(/\.[^.]+$/, ''); // strips extension
-  subj.value = subj.value ? subj.value + ', ' + ref : ref;
-  updateFullPrompt();
-  document.querySelectorAll('.tab-btn')[0].click(); // jump to Editor tab
+  const url = folderUrls[idx];
+  if (!url) return;
+  setRefImage(url);
+  const editorBtn = [...document.querySelectorAll('.tab-btn')].find(b => b.textContent.includes('Editor'));
+  if (editorBtn) switchTab('editor', editorBtn);
 }
 
 function closeFolderSection() {
@@ -2196,6 +2370,8 @@ function resetPrompt() {
 
 renderCameras();renderLenses();renderMovieStyles();renderAngles();renderSizeViews();renderFramingViews();renderMovements();
 updateModelSyntax();renderCharacters();renderMultishots();renderLibrary();renderWorkflow();
+_restoreFolderFromCache(); // async — re-renders library once folder blobs are ready
+_restoreRefFromStorage();  // sync — restores last reference image from localStorage
 
 </script>
 <div id="atDropdown" class="at-dropdown"></div>
