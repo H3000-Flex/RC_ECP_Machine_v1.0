@@ -291,10 +291,13 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
   background: var(--bg-primary);
   padding: .6rem 0 .5rem;
   margin-bottom: 1rem;
+}
+/* Shadow fades in only below the prompt card (left side), not the tool column */
+#promptStickyBar {
   box-shadow: 0 24px 24px 8px transparent;
   transition: box-shadow .35s ease;
 }
-.editor-sticky-row.is-sticky {
+.editor-sticky-row.is-sticky #promptStickyBar {
   box-shadow: 0 24px 24px 8px var(--bg-primary);
 }
 /* BODY — two-column grid; right column stretches to match left so sticky works */
