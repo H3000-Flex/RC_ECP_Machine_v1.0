@@ -8,7 +8,7 @@
 <link rel="icon" type="image/x-icon" href="images/rodeoclip.ico">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RODEO Clip | Eye Candy Prompt Machine V1.0</title>
+<title>RODEO Clip | Eye Candy Prompt Machine V2.0</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons@2.44.0/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -36,8 +36,8 @@ a:focus          { outline: 2px solid var(--accent); outline-offset: 2px; }
 .ms-syntax-seedance{background:rgba(79,195,247,.15);color:#4fc3f7}
 .ms-syntax-kling{background:rgba(77,182,172,.15);color:#4db6ac}
 
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;overflow-x:hidden}
-.hero{position:relative;height: 340px;padding:1rem 2rem;border-bottom:0px solid var(--border);overflow:hidden;background:var(--bg-primary)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg-primary);color:var(--text-primary);line-height:1.6;overflow-x:clip;margin:0;padding:0}
+.hero{position:relative;height: 220px;padding:1rem 2rem;border-bottom:0px solid var(--border);overflow:hidden;background:var(--bg-primary)}
 .hero-bg{position:absolute;top:-80px;left:0;width:100%;height:500px;object-fit:cover;object-position:center;z-index:0;pointer-events:none;will-change:transform;transform-origin:top center;}
 .hero::after {
   content: "";
@@ -50,13 +50,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   z-index: 1;
   pointer-events: none;
 }
-.hero-content{position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;padding:0}
-.hero-content img{width:auto;height:auto;display:block;max-width:100%}
-.container{position:sticky;z-index:100;background:var(--bg-primary);width:100%;padding:1rem 2rem}.tabs,.editor-grid{max-width:1400px;margin-left:auto;margin-right:auto;}
-.container {border-bottom: 0px solid var(--border);}
-.editor-grid{display:grid;grid-template-columns:1fr 390px;gap:2rem;align-items:start}
-
-@media(max-width:1200px){.editor-grid{grid-template-columns:1fr}}
+.hero-content{position:relative;z-index:2;max-width:1400px;margin:0 auto;width:100%;padding:0;height:100%;display:flex;align-items:center}
+.hero-content img{width:auto;height:auto;display:block;max-width:100%;max-height:250px}
+.container{position:sticky;top:0;z-index:100;background:var(--bg-primary);width:100%;padding:0}
+.tabs{max-width:1400px;margin-left:auto;margin-right:auto;position:relative;padding-left:1.25rem;padding-right:1.25rem}
 
 @media (max-width: 600px) {
 /* Let the hero shrink to fit its content instead of staying at 340px */
@@ -66,9 +63,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 /* Scale the header logo image down to fit */
 .hero-content img {width: 100%;max-width: 480px;height: auto;}
 /* Reduce side padding on the main container */
-.container {padding: 0.75rem 1rem;}
+.container {padding: 0; margin-top: 0;}
 /* Let the tab bar wrap on very small screens */
-.tabs {flex-wrap: wrap;gap: 0.2rem;margin-bottom: 1.5rem;}
+.tabs {flex-wrap: wrap;gap: 0.2rem;margin-bottom: 0;padding-left:0.75rem;padding-right:0.75rem;}
 .tab-btn {font-size: 0.78rem;padding: 0.35rem 0.6rem;}
 }
 
@@ -76,19 +73,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .output-panel{background:var(--card);border:1px solid var(--accent);border-radius:12px;padding:1.1rem;flex-shrink:0;position:sticky;top:0;z-index:20;margin-bottom:.5rem}
+/* h3 fold headers scroll with their section, not sticky inside right-tools-scroll */
 h3[onclick="toggleFold(this)"] {
-  position: sticky;
-  top: 220px;   /* adjust this value to match the height of your Generated Prompt panel */
   z-index: 9;
+  margin-top: 1.25rem;
 }
-.output-panel-title{font-size:.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem;display:flex;align-items:center;gap:.35rem}
+h3[onclick="toggleFold(this)"]:first-child {
+  margin-top: 0;
+}
+.output-panel-title{font-size:.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.0rem;display:flex;align-items:center;gap:.35rem}
 .prompt-output{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'Monaco','Courier New',monospace;font-size:.8rem;line-height:1.6;color:var(--text-secondary);max-height:320px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:.7rem;scrollbar-width:thin}
-.tabs{display:flex;gap:.4rem;margin-bottom:3rem;border-bottom:1px solid var(--border);flex-wrap:wrap;padding-bottom:1rem}
-.tab-btn{padding:.75rem 1.4rem;background:transparent;border:none;color:var(--text-secondary);font-size:.9rem;font-weight:500;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.45rem;border-bottom:2px solid transparent;margin-bottom:-1rem;padding-bottom:1.75rem}
+.tabs{display:flex;gap:.4rem;margin-bottom:0;flex-wrap:wrap;padding-bottom:1rem}
+.tabs::after{display:none}
+.tab-btn{padding:1.35rem 1.4rem;background:transparent;border:none;color:var(--text-secondary);font-size:.9rem;font-weight:500;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.45rem;border-bottom:2px solid transparent;margin-bottom:-1rem;padding-bottom:1.75rem}
 .tab-btn:hover{color:var(--text-primary)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab-content{display:none}
-.tab-content.active{display:block;animation:fadeIn .3s}
+.tab-content.active{display:block;animation:fadeIn .3s;padding:1rem 2rem;max-width:1400px;margin-left:auto;margin-right:auto;box-sizing:border-box}
+#tab-editor.active{display:block!important;animation:fadeIn .3s;padding:0 1.25rem;max-width:1400px;margin-left:auto;margin-right:auto;box-sizing:border-box;padding-top:.75rem}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .card-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem}
 .card-section h2{font-size:1.3rem;margin-bottom:1.5rem;color:var(--text-primary)}
@@ -134,10 +136,11 @@ button.danger:hover{background:rgba(229,62,62,.1)}
 
 .preset-btn{display:block;width:100%;padding:.5rem;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);text-align:center;cursor:pointer;font-size:.77rem;transition:all .2s;margin-bottom:.35rem}
 .preset-btn:hover{border-color:var(--accent);background:rgba(255,107,91,.05);color:var(--accent)}.btn-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;}
-.angle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:.45rem}
+.angle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem}
 .angle-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;overflow:hidden;text-align:center}
 .angle-card:hover{border-color:var(--accent);transform:scale(1.04);z-index:2;position:relative}
-.angle-card.selected{border-color:var(--accent);background:rgba(255,107,91,.1)}
+.angle-card.selected{border-color:var(--accent);background:rgba(255,107,91,.1);position:relative}
+.angle-card.selected::after{content:'✓';position:absolute;top:4px;right:6px;color:var(--accent);font-size:.7rem;font-weight:700}
 .angle-preview{display:block;width:100%}
 .angle-preview svg{display:block;width:100%;height:auto}
 .angle-name{font-size:.6rem;color:var(--text-secondary);padding:.2rem .15rem .25rem;line-height:1.2;display:block}
@@ -154,10 +157,30 @@ button.danger:hover{background:rgba(229,62,62,.1)}
 .timeline-item{min-width:48px;height:48px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.88rem;color:white}
 .timeline-arrow{color:var(--text-tertiary);font-size:18px}
 .info-box{background:rgba(255,107,91,.1);border:1px solid var(--accent);border-radius:8px;padding:.9rem;font-size:.88rem;color:var(--text-secondary);margin-bottom:1.5rem}
-.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;margin-bottom:2rem}
+.library-grid{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
 .library-item{aspect-ratio:1;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;position:relative;transition:all .3s}
 .library-item:hover{border-color:var(--accent)}
 .library-item img{width:100%;height:100%;object-fit:cover}
+/* Library two-column cards */
+.lib-card{display:grid;grid-template-columns:200px 1fr;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s}
+.lib-card:hover{border-color:var(--accent)}
+.lib-card-image{position:relative;aspect-ratio:1;background:var(--bg-tertiary);overflow:hidden}
+.lib-card-image img{width:100%;height:100%;object-fit:cover;cursor:pointer;transition:transform .2s}
+.lib-card-image img:hover{transform:scale(1.04)}
+.lib-img-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--text-tertiary);font-size:.8rem}
+.lib-img-placeholder i{font-size:2rem}
+.lib-add-img-btn{position:absolute;bottom:.4rem;right:.4rem;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:6px;padding:.2rem .4rem;font-size:.75rem;cursor:pointer;opacity:0;transition:opacity .2s}
+.lib-card-image:hover .lib-add-img-btn{opacity:1}
+.lib-card-prompt{padding:1rem;display:flex;flex-direction:column;gap:.5rem;overflow:hidden}
+.lib-card-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.lib-model-badge{background:var(--accent-dark,rgba(255,107,91,.15));color:var(--accent);padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.lib-date{font-size:.72rem;color:var(--text-tertiary)}
+.lib-prompt-text{flex:1;font-size:.82rem;line-height:1.5;color:var(--text-secondary);overflow-y:auto;max-height:140px;white-space:pre-wrap;word-break:break-word}
+.lib-card-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.lib-card-actions button{font-size:.75rem;padding:.25rem .6rem;border-radius:5px}
+#saveLibBtn{width:100%;justify-content:center;margin-top:.5rem;background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-secondary)}
+#saveLibBtn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:600px){.lib-card{grid-template-columns:1fr}.lib-card-image{aspect-ratio:16/9}}
 .empty-state{text-align:center;padding:3rem;color:var(--text-tertiary)}
 .empty-state i{font-size:48px;margin-bottom:1rem;opacity:.5}
 h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
@@ -214,6 +237,176 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
 .wf-connector::before,.wf-connector::after{content:'';flex:1;height:1px;background:var(--border)}
 .wf-export-area{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'Monaco','Courier New',monospace;font-size:.78rem;color:var(--text-secondary);white-space:pre-wrap;max-height:300px;overflow-y:auto;margin-top:1rem}
 .wf-empty{text-align:center;padding:3rem;color:var(--text-tertiary);border:2px dashed var(--border);border-radius:10px}
+
+.tab-dropdown { position: relative; display: inline-block; }
+.tab-submenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .3rem;
+  z-index: 200;
+  min-width: 140px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+}
+.tab-dropdown:hover .tab-submenu { display: block; }
+.tab-submenu button {
+  display: block; width: 100%;
+  text-align: left;
+  padding: .4rem .75rem;
+  font-size: .8rem;
+  border-radius: 5px;
+  background: none; border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.tab-submenu button:hover,
+.tab-submenu button.active { background: var(--bg-tertiary); color: var(--accent); }
+/* Sidebar preset active state */
+.preset-btn.active {
+  background: rgba(255,107,91,.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+/* lens-card selected ticker — same pattern as camera-card */
+.lens-card.selected::after{content:'✓';position:absolute;top:4px;right:6px;color:var(--accent);font-size:.7rem;font-weight:700}
+/* movie-card selected ticker */
+.movie-card.selected::after{content:'✓';position:absolute;top:4px;right:6px;color:var(--accent);font-size:.7rem;font-weight:700}
+/* ── Editor tab: block layout so sticky row works correctly ── */
+#tab-editor {
+  display: none;
+}
+/* STICKY ROW — both cards side by side, sticks below tab nav */
+.editor-sticky-row {
+  position: sticky;
+  top: var(--tabs-bottom, 52px);
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  column-gap: 1.25rem;
+  background: var(--bg-primary);
+  padding: .6rem 0 .5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 24px 24px 8px transparent;
+  transition: box-shadow .35s ease;
+}
+.editor-sticky-row.is-sticky {
+  box-shadow: 0 24px 24px 8px var(--bg-primary);
+}
+/* BODY — two-column grid; right column stretches to match left so sticky works */
+.editor-body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  column-gap: 1.25rem;
+  align-items: start;
+  min-height: 100vh;
+}
+/* LEFT column — flows naturally with page scroll */
+.editor-left {
+  min-width: 0;
+  padding-bottom: 0.5rem;
+}
+/* RIGHT column — fills the full grid track height (= left column height) */
+.editor-right {
+  align-self: stretch;
+  min-width: 0;
+}
+/* STICKY wrapper — sticks once the top threshold is reached (after nav sticks) */
+.right-tools-sticky {
+  position: sticky;
+  top: var(--editor-tools-top, 280px);
+}
+/* Scrollable tools area inside the sticky wrapper */
+.right-tools-scroll {
+  max-height: var(--editor-tools-height, calc(100vh - 280px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.right-tools-scroll::-webkit-scrollbar { width: 4px; }
+.right-tools-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* Prompt sticky bar — no longer needs its own sticky, it is in the sticky row */
+#promptStickyBar {
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: .5rem 1rem .6rem;
+}
+#promptStickyBar .prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .25rem;
+}
+#promptStickyBar .prompt-label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+#promptStickyBar .prompt-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .5rem;
+  flex-shrink: 0;
+}
+#promptStickyBar #fullPrompt {
+  min-height: 130px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: .82rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .6rem .75rem;
+}
+#refImageCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .75rem;
+  flex-shrink: 0;
+}
+#refImageCard .ref-label {
+  font-size: .75rem;
+  color: var(--text-secondary);
+  margin-bottom: .5rem;
+  font-weight: 600;
+}
+.right-tools-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.right-tools-scroll::-webkit-scrollbar { width: 4px; }
+.right-tools-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.editor-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+.editor-title {
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+  color: var(--text-primary);
+}
+#saveLibBtn{background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-secondary)}
+#saveLibBtn:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -221,7 +414,7 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
   <img src="images/hero-bg.gif" class="hero-bg" alt="">
   <div class="hero-content">
     <a href="http://www.rodeoclip.com" target="_blank">
-      <img src="images/rodeo-header.png" alt="RODEO CLIP - Eye Candy Prompt Machine V1.0">
+      <img src="images/rodeo-header.png" alt="RODEO CLIP - Eye Candy Prompt Machine V2.0">
     </a>
   </div>
 </div>
@@ -230,85 +423,148 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
     <button class="tab-btn active" onclick="switchTab('editor',this)"><i class="ti ti-edit"></i> Editor</button>
     <!-- <button class="tab-btn" onclick="switchTab('multishot',this)"><i class="ti ti-film"></i> Multishot</button>-->
     <button class="tab-btn" onclick="switchTab('characters',this)"><i class="ti ti-users"></i> Characters</button>
-    <button class="tab-btn" onclick="switchTab('library',this)"><i class="ti ti-photo"></i> Library</button>
+    <div class="tab-dropdown">
+      <button class="tab-btn" onclick="switchTab('library',this)"><i class="ti ti-photo"></i> Library</button>
+      <div class="tab-submenu">
+        <button onclick="setLibraryFilter('all')" class="active">All</button>
+        <button onclick="setLibraryFilter('images')">Images Only</button>
+        <button onclick="setLibraryFilter('prompts')">Prompts Only</button>
+      </div>
+    </div>
     <button class="tab-btn" onclick="switchTab('smartedit',this)"><i class="ti ti-sparkles"></i> Smart Edit</button>
     <button class="tab-btn" onclick="switchTab('workflow',this)"><i class="ti ti-sitemap"></i> Workflow Builder</button>
   </div>
+</div>
 
-  <!-- EDITOR TAB -->
+<!-- EDITOR TAB -->
   <div id="tab-editor" class="tab-content active">
-    <div class="editor-grid">
-      <div>
-        <div class="card-section">
-          <h2>Prompt Editor</h2>
-          <div class="model-selector">
-            <label class="form-label">AI Model</label>
-            <select id="modelSelector" onchange="updateModelSyntax()">
-              <option value="grok">Grok Imagine</option>
-              <option value="midjourney">Midjourney 8.1</option>
-              <option value="nanoBanana">Nano Banana Pro (Google Gemini 3)</option>
-              <option value="chatgpt2">ChatGPT Images 2.0</option>
-              <option value="kling">Kling 3</option>
-              <option value="seedance">Seedance 2.0</option>
-            </select>
-            <div class="model-info" id="modelInfo"></div>
+
+    <!-- Sentinel: when this leaves viewport the sticky row is active -->
+    <div id="stickysentinel" style="height:1px;margin-bottom:-1px;pointer-events:none"></div>
+
+    <!-- STICKY ROW: both cards side by side, sticks below tab nav -->
+    <div class="editor-sticky-row">
+      <div id="promptStickyBar">
+        <div class="prompt-header">
+          <span class="prompt-label">Generated Prompt</span>
+          <div class="prompt-actions">
+            <button onclick="resetPrompt()" style="font-size:.75rem;padding:.2rem .5rem"><i class="ti ti-refresh"></i> Reset</button>
+            <button id="saveLibBtn" onclick="savePromptToLibrary()" style="font-size:.75rem;padding:.2rem .5rem"><i class="ti ti-bookmark"></i> Save</button>
+            <button id="copyBtn" onclick="copyPrompt()" class="primary" style="font-size:.75rem;padding:.2rem .6rem"><i class="ti ti-copy"></i> Copy</button>
           </div>
-          <div class="form-group">
-            <label class="form-label">Subject</label>
-            <input type="text" id="subject" placeholder="Main character, object, or scene" value="A woman in a red dress walking through rain">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Action <span class="form-label-sub">— what the subject is doing</span></label>
-            <textarea id="action" placeholder="Movement, gesture, expression, behaviour..."></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Composition <span class="form-label-sub">— camera angles, size view, framing</span></label>
-            <textarea id="composition" placeholder="Camera angle, framing, depth...">Wide shot, Dutch angle, leading lines converging on subject</textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Lighting</label>
-            <textarea id="lighting" placeholder="Light quality, color, mood...">Moody amber streetlights, volumetric fog, rim lighting on subject, color grading cool-blue</textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Lens / Technical</label>
-            <div class="camera-grid" id="techLensGrid" style="margin-bottom:.55rem"></div>
-            <input type="text" id="camera" placeholder="Lens, aperture, depth of field" value="35mm cinematic, f/1.4, shallow depth of field">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Cinema Camera <span class="form-label-sub">— Rodeo Clip Cameras</span></label>
-            <div class="camera-grid" id="cameraGrid"></div>
-            <textarea id="cameraBody" class="camera-body-field" placeholder="Select a camera above, or type directly…" oninput="updateFullPrompt()"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Cinema Lens <span class="form-label-sub">— Rodeo Clip Lenses</span></label>
-            <div class="lens-grid" id="lensGrid"></div>
-            <textarea id="lensBody" class="lens-body-field" placeholder="Select a lens above, or type directly…" oninput="updateFullPrompt()"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Movie Style <span class="form-label-sub">— sets the Style / References field</span></label>
-            <div class="movie-grid" id="movieGrid"></div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Additional Style / References</label>
-            <input type="text" id="style" placeholder="Director, film stock, mood..." value="Film noir, hyperrealistic, cinematography by Stanley Kubrick">
-          </div>
-          <div class="button-group">
-            <button onclick="beautifyPrompt()"><i class="ti ti-wand-2"></i> Beautify</button>
-            <button onclick="expandPrompt()"><i class="ti ti-plus"></i> Expand</button>
-            <button onclick="simplifyPrompt()"><i class="ti ti-minus"></i> Simplify</button>
-            <button onclick="rollElements()"><i class="ti ti-dice-5"></i> Roll</button>
-          </div>
+        </div>
+        <div id="fullPrompt">Fill in the fields...</div>
+      </div>
+      <div id="refImageCard">
+        <div class="ref-label"><i class="ti ti-photo"></i> Reference Image</div>
+        <!-- Hidden legacy panel for JS compatibility -->
+        <div id="refImagePanel" style="display:none"></div>
+        <div id="refImageDisplay" onclick="pickRefFromLibrary()"
+          style="width:100%;aspect-ratio:16/9;background:var(--bg-tertiary);border:1.5px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:border-color .2s;">
+          <span id="refImagePlaceholder" style="font-size:.8rem;color:var(--text-tertiary);text-align:center;">
+            <i class="ti ti-photo-search" style="display:block;font-size:1.5rem;margin-bottom:.25rem;"></i>
+            Click to pick from Library
+          </span>
+          <img id="refImagePreview" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+        </div>
+        <div id="refBtnRow" style="display:none;flex-direction:row;gap:.4rem;margin-top:.4rem">
+          <button onclick="clearRefImage()" id="clearRefBtn" style="flex:1;font-size:.7rem;padding:.15rem .4rem">
+            <i class="ti ti-x"></i> Clear
+          </button>
+          <button onclick="previewRefImage()" id="previewRefBtn" style="flex:1;font-size:.7rem;padding:.15rem .4rem">
+            <i class="ti ti-eye"></i> Preview
+          </button>
         </div>
       </div>
+    </div><!-- /.editor-sticky-row -->
 
-      <!-- SIDEBAR -->
-      <div class="sidebar">
-        <div class="output-panel">
-          <div class="output-panel-title"><i class="ti ti-terminal-2"></i> Generated Prompt</div>
-          <div class="prompt-output" id="fullPrompt">Fill in the fields...</div>
-          <button class="primary" id="copyBtn" onclick="copyPrompt()" style="width:100%;justify-content:center"><i class="ti ti-copy"></i> Copy to Clipboard</button>
+    <!-- BODY: two columns, left scrolls with page, right has own scroll -->
+    <div class="editor-body">
+      <div class="editor-left">
+
+        <!-- Prompt Editor -->
+        <div class="editor-card">
+        <h2 class="editor-title">Prompt Editor</h2>
+        <div class="model-selector">
+          <label class="form-label">AI Model</label>
+          <select id="modelSelector" onchange="updateModelSyntax()">
+            <option value="grok">Grok Imagine</option>
+            <option value="midjourney">Midjourney 8.1</option>
+            <option value="nanoBanana">Nano Banana Pro (Google Gemini 3)</option>
+            <option value="chatgpt2">ChatGPT Images 2.0</option>
+            <option value="kling">Kling 3</option>
+            <option value="seedance">Seedance 2.0</option>
+          </select>
+          <div class="model-info" id="modelInfo"></div>
+        </div>
+        <div id="durationRow" class="form-group" style="display:none">
+          <label class="form-label">Duration (seconds)</label>
+          <input type="number" id="durationInput" min="3" max="60" value="5" step="1"
+            oninput="updateFullPrompt()" placeholder="e.g. 5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" id="subject" placeholder="Main character, object, or scene" value="A woman in a red dress walking through rain">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Action <span class="form-label-sub">— what the subject is doing</span></label>
+          <textarea id="action" placeholder="Movement, gesture, expression, behaviour..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Composition <span class="form-label-sub">— camera angles, size view, framing</span></label>
+          <textarea id="composition" placeholder="Camera angle, framing, depth...">Wide shot, Dutch angle, leading lines converging on subject</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lighting</label>
+          <textarea id="lighting" placeholder="Light quality, color, mood...">Moody amber streetlights, volumetric fog, rim lighting on subject, color grading cool-blue</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lens / Technical</label>
+          <div class="camera-grid" id="techLensGrid" style="margin-bottom:.55rem"></div>
+          <input type="text" id="camera" placeholder="Lens, aperture, depth of field" value="35mm cinematic, f/1.4, shallow depth of field">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cinema Camera <span class="form-label-sub">— Rodeo Clip Cameras</span></label>
+          <div class="camera-grid" id="cameraGrid"></div>
+          <textarea id="cameraBody" class="camera-body-field" placeholder="Select a camera above, or type directly…" oninput="updateFullPrompt()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cinema Lens <span class="form-label-sub">— Rodeo Clip Lenses</span></label>
+          <div class="lens-grid" id="lensGrid"></div>
+          <textarea id="lensBody" class="lens-body-field" placeholder="Select a lens above, or type directly…" oninput="updateFullPrompt()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Movie Style <span class="form-label-sub">— sets the Style / References field</span></label>
+          <div class="movie-grid" id="movieGrid"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Additional Style / References</label>
+          <input type="text" id="style" placeholder="Director, film stock, mood..." value="Film noir, hyperrealistic, cinematography by Stanley Kubrick">
+        </div>
+        <div class="button-group">
+          <button onclick="beautifyPrompt()"><i class="ti ti-wand-2"></i> Beautify</button>
+          <button onclick="expandPrompt()"><i class="ti ti-plus"></i> Expand</button>
+          <button onclick="simplifyPrompt()"><i class="ti ti-minus"></i> Simplify</button>
+          <button onclick="rollElements()"><i class="ti ti-dice-5"></i> Roll</button>
+        </div>
+        </div><!-- /.editor-card -->
+
+        <!-- Footer inline — right after prompt editor card -->
+        <div style="display:flex;align-items:center;margin-top:1.2rem;gap:1.1rem;padding:.5rem 0 2rem">
+          <a href="http://www.rodeoclip.com" target="_blank">
+            <img src="images/rodeo-footer.png" alt="RODEO CLIP - Eye Candy Prompt Machine">
+          </a>
+          <div>
+            <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px;margin-bottom:0">All rights reserved | <a href="http://www.rodeoclip.com" target="_blank">RODEO Clip</a> &copy; 2026</div>
+            <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px">RC Eye Candy Prompt Machine | Powered by <a href="https://claude.ai" target="_blank">Claude</a> | Operated by <a href="http://www.vorticoso.com" target="_blank">Vorticoso</a></div>
+          </div>
         </div>
 
+      </div><!-- /.editor-left -->
+
+      <div class="editor-right">
+        <div class="right-tools-sticky">
+        <div class="right-tools-scroll">
         <h3 onclick="toggleFold(this)">CAMERA ANGLES <span class="fold-arrow">▼</span><span style="font-size:.65rem;color:var(--text-tertiary);font-weight:400">→ Composition</span></h3><div class="fold-body">
           <div class="angle-grid" id="angleGrid"></div>
         </div>
@@ -350,9 +606,12 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
           <button class="preset-btn" onclick="insertPreset('style','Christopher Nolan IMAX grandeur')">Nolan</button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+        </div><!-- /.right-tools-scroll -->
+        </div><!-- /.right-tools-sticky -->
+      </div><!-- /.editor-right -->
+    </div><!-- /.editor-body -->
+
+  </div><!-- /#tab-editor -->
 
   <!-- MULTISHOT TAB -->
   <div id="tab-multishot" class="tab-content">
@@ -447,7 +706,24 @@ h3{font-size:1rem;margin-bottom:.9rem;color:var(--text-primary)}
       </div>
     </div>
   </div>
-</div>
+
+<footer id="siteFooter" style="padding:1.5rem 0 2rem;margin-top:0;border-top:0px solid var(--border);transition:opacity .2s">
+  <div style="max-width:1400px;margin:0 auto;padding:0 2rem">
+  <div style="display:flex;align-items:center;gap:1.1rem">
+    <a href="http://www.rodeoclip.com" target="_blank">
+      <img src="images/rodeo-footer.png" alt="RODEO CLIP - Eye Candy Prompt Machine">
+    </a>
+    <div>
+      <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px;margin-bottom:.0rem">
+        All rights reserved | <a href="http://www.rodeoclip.com" target="_blank">RODEO Clip</a> &copy; 2026
+      </div>
+      <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px">
+        RC Eye Candy Prompt Machine | Powered by <a href="https://claude.ai" target="_blank">Claude</a> | Operated by <a href="http://www.vorticoso.com" target="_blank">Vorticoso</a>
+      </div>
+    </div>
+  </div>
+  </div>
+</footer>
 
 <!-- MODALS -->
 <div id="multishotModal" class="modal" onclick="if(event.target===this)closeMultishotModal()">
@@ -738,7 +1014,13 @@ let library    = JSON.parse(localStorage.getItem('rodeoLibrary'))    || [];
 let wfSteps    = JSON.parse(localStorage.getItem('rodeoWorkflow'))   || [];
 let selCamera  = '';
 let selStyle   = '';
+let selAngles  = new Set();
+let selSizes   = new Set();
+let selFraming = new Set();
+let selMovements = new Set();
 let wfEditId   = null;
+let libraryFilter = 'all';
+let refImageUrl = '';
 
 const modelInfo = {
   grok:       {name:'Grok Imagine',       syntax:'Natural language, structured sections'},
@@ -770,30 +1052,29 @@ function selectCamera(i) {
 }
 
 let selLens = '';
+let selTechLensIdx = -1;
 
 function renderLenses() {
   document.getElementById('lensGrid').innerHTML = LENSES.map((l,i) => `
-    <div class="lens-card${selLens===l.name?' selected':''}" onclick="selectLens(${i})" title="${l.name} · ${l.type}">
+    <div class="lens-card${selLens===l.name?' selected':''}" onclick="selectLens(${i})" title="${l.name} · ${l.type}" style="position:relative">
       ${LENS_SVGS[l.key]||''}
       <div class="lens-name">${l.name}</div>
     </div>`).join('');
 }
 function selectTechLens(i) {
-  const l = TECH_LENSES[i];
-  let selTL = document.querySelector('#techLensGrid .camera-card.selected');
-  if (selTL && selTL.dataset.idx == i) {
-    selTL.classList.remove('selected');
+  if (selTechLensIdx === i) {
+    selTechLensIdx = -1;
     document.getElementById('camera').value = '';
-    updateFullPrompt(); return;
+  } else {
+    selTechLensIdx = i;
+    document.getElementById('camera').value = TECH_LENSES[i].prompt;
   }
-  document.querySelectorAll('#techLensGrid .camera-card').forEach(c => c.classList.remove('selected'));
-  document.querySelector('#techLensGrid .camera-card[data-idx="'+i+'"]').classList.add('selected');
-  document.getElementById('camera').value = l.prompt;
+  renderTechLensGrid();
   updateFullPrompt();
 }
 function renderTechLensGrid() {
   document.getElementById('techLensGrid').innerHTML = TECH_LENSES.map((l,i) =>
-    `<div class="camera-card" data-idx="${i}" onclick="selectTechLens(${i})">
+    `<div class="camera-card${selTechLensIdx === i ? ' selected' : ''}" data-idx="${i}" onclick="selectTechLens(${i})">
       <div class="cam-name">${l.name}</div>
       <div class="cam-desc">${l.desc}</div>
     </div>`
@@ -813,7 +1094,7 @@ function selectLens(i) {
 
 function renderMovieStyles() {
   document.getElementById('movieGrid').innerHTML = MOVIE_STYLES.map((s,i) => `
-    <div class="movie-card${selStyle===s.name?' selected':''}" onclick="selectStyle(${i})">
+    <div class="movie-card${selStyle===s.name?' selected':''}" onclick="selectStyle(${i})" style="position:relative">
       <div class="movie-icon">${s.icon}</div>
       <div class="movie-name">${s.name}</div>
     </div>`).join('');
@@ -832,28 +1113,28 @@ function selectStyle(i) {
 
 function renderAngles() {
   document.getElementById('angleGrid').innerHTML = CAMERA_ANGLES.map((a,i) => `
-    <div class="angle-card" onclick="appendComposition(CAMERA_ANGLES[${i}].prompt)" title="${a.name}">
+    <div class="angle-card${selAngles.has(a.key)?' selected':''}" style="position:relative" onclick="toggleAngle(${i})" title="${a.name}">
       <div class="angle-preview">${ANGLE_SVGS[a.key]||''}</div>
       <span class="angle-name">${a.name}</span>
     </div>`).join('');
 }
 function renderSizeViews() {
   document.getElementById('sizeGrid').innerHTML = SIZE_VIEWS.map((a,i) => `
-    <div class="angle-card" onclick="appendComposition(SIZE_VIEWS[${i}].prompt)" title="${a.name}">
+    <div class="angle-card${selSizes.has(a.key)?' selected':''}" style="position:relative" onclick="toggleSize(${i})" title="${a.name}">
       <div class="angle-preview">${SIZE_VIEW_SVGS[a.key]||''}</div>
       <span class="angle-name">${a.name}</span>
     </div>`).join('');
 }
 function renderFramingViews() {
   document.getElementById('framingGrid').innerHTML = FRAMING_VIEWS.map((a,i) => `
-    <div class="angle-card" onclick="appendComposition(FRAMING_VIEWS[${i}].prompt)" title="${a.name}">
+    <div class="angle-card${selFraming.has(a.key)?' selected':''}" style="position:relative" onclick="toggleFraming(${i})" title="${a.name}">
       <div class="angle-preview">${FRAMING_VIEW_SVGS[a.key]||''}</div>
       <span class="angle-name">${a.name}</span>
     </div>`).join('');
 }
 function renderMovements() {
   document.getElementById('movementGrid').innerHTML = MOVEMENTS.map((a,i) => `
-    <div class="angle-card" onclick="appendComposition(MOVEMENTS[${i}].prompt)" title="${a.name}">
+    <div class="angle-card${selMovements.has(a.key)?' selected':''}" style="position:relative" onclick="toggleMovement(${i})" title="${a.name}">
       <div class="angle-preview">${MOVEMENT_SVGS[a.key]||''}</div>
       <span class="angle-name">${a.name}</span>
     </div>`).join('');
@@ -863,6 +1144,64 @@ function appendComposition(text) {
   const f = document.getElementById('composition');
   f.value = f.value ? f.value + ', ' + text : text;
   updateFullPrompt();
+}
+function removeFromComposition(text) {
+  const f = document.getElementById('composition');
+  let val = f.value;
+  // Remove as a unit — the prompt may contain commas so we can't split by ', '
+  if (val.includes(', ' + text)) {
+    val = val.replace(', ' + text, '');
+  } else if (val.includes(text + ', ')) {
+    val = val.replace(text + ', ', '');
+  } else {
+    val = val.replace(text, '');
+  }
+  f.value = val.trim();
+  updateFullPrompt();
+}
+function toggleAngle(i) {
+  const a = CAMERA_ANGLES[i];
+  if (selAngles.has(a.key)) {
+    selAngles.delete(a.key);
+    removeFromComposition(a.prompt);
+  } else {
+    selAngles.add(a.key);
+    appendComposition(a.prompt);
+  }
+  renderAngles();
+}
+function toggleSize(i) {
+  const a = SIZE_VIEWS[i];
+  if (selSizes.has(a.key)) {
+    selSizes.delete(a.key);
+    removeFromComposition(a.prompt);
+  } else {
+    selSizes.add(a.key);
+    appendComposition(a.prompt);
+  }
+  renderSizeViews();
+}
+function toggleFraming(i) {
+  const a = FRAMING_VIEWS[i];
+  if (selFraming.has(a.key)) {
+    selFraming.delete(a.key);
+    removeFromComposition(a.prompt);
+  } else {
+    selFraming.add(a.key);
+    appendComposition(a.prompt);
+  }
+  renderFramingViews();
+}
+function toggleMovement(i) {
+  const a = MOVEMENTS[i];
+  if (selMovements.has(a.key)) {
+    selMovements.delete(a.key);
+    removeFromComposition(a.prompt);
+  } else {
+    selMovements.add(a.key);
+    appendComposition(a.prompt);
+  }
+  renderMovements();
 }
 
 function updateFullPrompt() {
@@ -891,10 +1230,9 @@ function formatPromptForModel(subject,action,composition,lighting,camera,cameraB
     case 'chatgpt2':
       return `Create an image of: ${subject}${action?'. Action: '+action:''}. Scene: ${composition}. Lighting: ${lighting}. Photography: ${camera}${camTag?', '+camTag:''}. Style: ${style}.`;
     case 'kling':
-      return `[SCENE] ${subject}${action?' — '+action:''}\n[CAMERA] ${composition}, ${camera}${camTag?', '+camTag:''}\n[LIGHTING] ${lighting}\n[STYLE] ${style}`;
+      { const dur = document.getElementById('durationInput').value || '5'; const refNote = refImageUrl ? '\n[Reference: ' + refImageUrl + ']' : ''; return `[SCENE] ${subject}${action?' — '+action:''}\n[CAMERA] ${composition}, ${camera}${camTag?', '+camTag:''}\n[LIGHTING] ${lighting}\n[STYLE] ${style}\n[DURATION] ${dur}s${refNote}`; }
     case 'seedance':
-      return `[SHOT]\nSubject: ${subject}${action?'\nAction: '+action:''}\nCamera: ${composition}, ${camera}${camTag?', '+camTag:''}\nLighting: ${lighting}\nAesthetic: ${style}`;
-    default:
+      { const dur = document.getElementById('durationInput').value || '5'; const refNote = refImageUrl ? '\n[Reference: ' + refImageUrl + ']' : ''; return `[SHOT]\nSubject: ${subject}${action?'\nAction: '+action:''}\nCamera: ${composition}, ${camera}${camTag?', '+camTag:''}\nLighting: ${lighting}\nAesthetic: ${style}\nDuration: ${dur}s${refNote}`; }
       return [subject,action,composition,lighting,camera,camTag,style].filter(Boolean).join(' | ');
   }
 }
@@ -902,6 +1240,9 @@ function formatPromptForModel(subject,action,composition,lighting,camera,cameraB
 function updateModelSyntax() {
   const m = document.getElementById('modelSelector').value;
   document.getElementById('modelInfo').textContent = modelInfo[m].syntax;
+  const isVideo = (m === 'kling' || m === 'seedance');
+  document.getElementById('durationRow').style.display = isVideo ? '' : 'none';
+  updateRefImagePanel();
   updateFullPrompt();
 }
 
@@ -935,8 +1276,96 @@ function copyPrompt() {
   btn.style.background='#22c55e';btn.style.borderColor='#22c55e';
   setTimeout(()=>{btn.innerHTML=orig;btn.style.background='';btn.style.borderColor='';},1600);
 }
+
+function setLibraryFilter(filter) {
+  libraryFilter = filter;
+  document.querySelectorAll('.tab-submenu button').forEach(b => b.classList.remove('active'));
+  if (event && event.target) event.target.classList.add('active');
+  renderLibrary();
+  const libBtn = document.querySelector('.tab-dropdown .tab-btn');
+  switchTab('library', libBtn);
+}
+
+function updateRefImagePanel() {
+  // refImageCard is always visible; show/hide the button row based on whether an image is set
+  const btnRow = document.getElementById('refBtnRow');
+  if (btnRow) btnRow.style.display = refImageUrl ? 'flex' : 'none';
+}
+
+function pickRefFromLibrary() {
+  const images = library.filter(i => i.url);
+  if (!images.length) { alert('No images in library yet. Add images first.'); return; }
+  let overlay = document.getElementById('refPickerOverlay');
+  if (overlay) overlay.remove();
+  overlay = document.createElement('div');
+  overlay.id = 'refPickerOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:var(--bg-secondary);border-radius:12px;padding:1.25rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <strong>Pick Reference Image</strong>
+        <button onclick="document.getElementById('refPickerOverlay').remove()" style="padding:.2rem .5rem">&#x2715;</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.5rem;">
+        ${images.map(i => `<img src="${i.url}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'" onclick="setRefImage('${i.url}')">`).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function setRefImage(url) {
+  refImageUrl = url;
+  document.getElementById('refImagePreview').src = url;
+  document.getElementById('refImagePreview').style.display = 'block';
+  document.getElementById('refImagePlaceholder').style.display = 'none';
+  const overlay = document.getElementById('refPickerOverlay');
+  if (overlay) overlay.remove();
+  document.getElementById('refBtnRow').style.display = 'flex';
+  updateRefImagePanel();
+  updateFullPrompt();
+}
+
+function clearRefImage() {
+  refImageUrl = '';
+  document.getElementById('refImagePreview').style.display = 'none';
+  document.getElementById('refImagePlaceholder').style.display = '';
+  document.getElementById('refBtnRow').style.display = 'none';
+  updateRefImagePanel();
+  updateFullPrompt();
+}
+
+function previewRefImage() {
+  if (!refImageUrl) return;
+  let overlay = document.getElementById('refPreviewOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'refPreviewOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+    overlay.onclick = () => overlay.remove();
+    const img = document.createElement('img');
+    img.style.cssText = 'max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.6);';
+    img.src = refImageUrl;
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
+  }
+}
+
 function insertPreset(section, text) {
   const f = document.getElementById(section);
+  const btn = event && event.currentTarget ? event.currentTarget : (event && event.target ? event.target : null);
+  if (btn && btn.classList.contains('preset-btn')) {
+    if (btn.classList.contains('active')) {
+      btn.classList.remove('active');
+      // Remove this entry from the field (same split-filter-join as angle/size/framing)
+      f.value = f.value.split(', ').filter(p => p.trim() !== text.trim()).join(', ');
+      updateFullPrompt();
+    } else {
+      btn.classList.add('active');
+      f.value = f.value ? f.value + ', ' + text : text;
+      updateFullPrompt();
+    }
+    return;
+  }
   f.value = f.value ? f.value + ', ' + text : text;
   updateFullPrompt();
 }
@@ -948,6 +1377,8 @@ function switchTab(tabName, btn) {
   btn.classList.add('active');
   if (tabName==='smartedit')
     document.getElementById('smartEditSource').textContent = document.getElementById('fullPrompt').textContent;
+  const sf = document.getElementById('siteFooter');
+  if (sf) sf.style.display = tabName === 'editor' ? 'none' : '';
 }
 
 // CHARACTERS
@@ -1253,22 +1684,119 @@ function clearStoryboard() {
 // LIBRARY
 function openLibraryModal()  { document.getElementById('libraryModal').classList.add('active'); }
 function closeLibraryModal() { document.getElementById('libraryModal').classList.remove('active'); }
+function openLibraryModalFor(id) {
+  window._libTargetId = id;
+  openLibraryModal();
+}
+function getModelLabel(val) {
+  const labels = {
+    'midjourney': 'Midjourney 8.1',
+    'grok': 'Grok Imagine',
+    'nanoBanana': 'Nano Banana Pro',
+    'chatgpt2': 'ChatGPT Images 2.0',
+    'kling': 'Kling 3',
+    'seedance': 'Seedance 2.0'
+  };
+  return labels[val] || val;
+}
+function savePromptToLibrary() {
+  const prompt = document.getElementById('fullPrompt').textContent.trim();
+  if (!prompt || prompt === 'Fill in the fields...') return;
+  const modelEl = document.getElementById('modelSelector');
+  const modelVal = modelEl ? modelEl.value : '';
+  const model = getModelLabel(modelVal);
+  const date = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+  const item = { id: Date.now(), url: refImageUrl || '', prompt, model, date };
+  library.push(item);
+  localStorage.setItem('rodeoLibrary', JSON.stringify(library));
+  renderLibrary();
+  const libBtn = [...document.querySelectorAll('.tab-btn')].find(b => b.textContent.includes('Library'));
+  if (libBtn) switchTab('library', libBtn);
+  const btn = document.getElementById('saveLibBtn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<i class="ti ti-check"></i> Saved!';
+  btn.style.color = 'var(--accent)';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1500);
+}
+function selectLibImage(id) {
+  const item = library.find(i => i.id === id);
+  if (!item || !item.url) return;
+  // Use the image URL as a reference in the subject field
+  const subj = document.getElementById('subject');
+  if (subj) { subj.value = subj.value ? subj.value + ', ' + item.url : item.url; updateFullPrompt(); }
+}
+function copyLibPrompt(id) {
+  const item = library.find(i => i.id === id);
+  if (!item) return;
+  navigator.clipboard.writeText(item.prompt);
+}
+function useLibPrompt(id) {
+  const item = library.find(i => i.id === id);
+  if (!item) return;
+  document.getElementById('fullPrompt').textContent = item.prompt;
+  const editorBtn = [...document.querySelectorAll('.tab-btn')].find(b => b.textContent.includes('Editor'));
+  if (editorBtn) switchTab('editor', editorBtn);
+}
 function addToLibrary() {
-  const url=document.getElementById('libraryUrl').value.trim();
-  if(!url){alert('Enter a URL');return;}
-  library.push({id:Date.now(),url,prompt:document.getElementById('libraryPrompt').value});
-  localStorage.setItem('rodeoLibrary',JSON.stringify(library));closeLibraryModal();renderLibrary();
+  const url = document.getElementById('libraryUrl').value.trim();
+  if (!url) { alert('Enter a URL'); return; }
+  if (window._libTargetId) {
+    // Adding image to an existing library item
+    const item = library.find(i => i.id === window._libTargetId);
+    if (item) item.url = url;
+    window._libTargetId = null;
+  } else {
+    library.push({id: Date.now(), url, prompt: document.getElementById('libraryPrompt').value, model: '', date: ''});
+  }
+  localStorage.setItem('rodeoLibrary', JSON.stringify(library));
+  closeLibraryModal();
+  renderLibrary();
 }
 function renderLibrary() {
-  const grid=document.getElementById('libraryGrid');
-  const empty=document.getElementById('libraryEmpty');
-  if(!library.length){grid.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  grid.innerHTML=library.map(item=>`
-    <div class="library-item">
-      <img src="${item.url}" alt="" onerror="this.style.background='var(--bg-tertiary)'">
-      <button onclick="deleteFromLibrary(${item.id})" style="position:absolute;top:4px;right:4px;padding:3px 7px;background:rgba(0,0,0,.75);color:white;border:none;font-size:10px;border-radius:3px;cursor:pointer"><i class="ti ti-trash"></i></button>
-    </div>`).join('');
+  const grid = document.getElementById('libraryGrid');
+  const empty = document.getElementById('libraryEmpty');
+  if (!library.length) {
+    empty.innerHTML = '<i class="ti ti-photo"></i><p>No items saved yet.</p>';
+    empty.style.display = '';
+    grid.innerHTML = '';
+    return;
+  }
+  let items = [...library].reverse();
+  if (libraryFilter === 'images') items = items.filter(i => i.url && i.url.trim());
+  if (libraryFilter === 'prompts') items = items.filter(i => i.prompt && i.prompt.trim());
+  if (!items.length) {
+    const msg = libraryFilter === 'images' ? 'No images saved yet.' : libraryFilter === 'prompts' ? 'No prompts saved yet.' : 'No items saved yet.';
+    empty.innerHTML = '<i class="ti ti-photo"></i><p>' + msg + '</p>';
+    empty.style.display = '';
+    grid.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = items.map(item => `
+    <div class="lib-card" data-id="${item.id}">
+      <div class="lib-card-image">
+        ${item.url
+          ? `<img src="${item.url}" alt="ref" onclick="selectLibImage(${item.id})">`
+          : `<div class="lib-img-placeholder"><i class="ti ti-photo-off"></i><span>No image</span></div>`
+        }
+        <button class="lib-add-img-btn" onclick="openLibraryModalFor(${item.id})" title="Add image">
+          <i class="ti ti-camera-plus"></i>
+        </button>
+      </div>
+      <div class="lib-card-prompt">
+        <div class="lib-card-meta">
+          <span class="lib-model-badge">${item.model || 'Prompt'}</span>
+          <span class="lib-date">${item.date || ''}</span>
+        </div>
+        <div class="lib-prompt-text">${item.prompt || '<em style="opacity:.5">No prompt</em>'}</div>
+        <div class="lib-card-actions">
+          <button onclick="copyLibPrompt(${item.id})" title="Copy prompt"><i class="ti ti-copy"></i> Copy</button>
+          <button onclick="useLibPrompt(${item.id})" title="Use in editor"><i class="ti ti-arrow-back-up"></i> Use</button>
+          <button onclick="deleteFromLibrary(${item.id})" title="Delete" style="color:#e57373"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 function deleteFromLibrary(id) {
   library=library.filter(i=>i.id!==id);
@@ -1606,34 +2134,71 @@ document.addEventListener('mousedown', e => {
 ['subject','composition','lighting'].forEach(id =>
   document.getElementById(id).addEventListener('input', atCheck));
 
+// ── Set --tabs-bottom and editor column CSS variables ──
+function setTabsBottom() {
+  const navContainer = document.querySelector('.container');
+  const stickyRow = document.querySelector('.editor-sticky-row');
+  const tabsH = navContainer ? navContainer.offsetHeight : 52;
+  const stickyRowH = stickyRow ? stickyRow.offsetHeight : 200;
+  const toolsTop = tabsH + stickyRowH - 10;
+  const toolsH = window.innerHeight - toolsTop - 20;
+  document.documentElement.style.setProperty('--tabs-bottom', tabsH + 'px');
+  document.documentElement.style.setProperty('--editor-tools-top', toolsTop + 'px');
+  document.documentElement.style.setProperty('--editor-tools-height', toolsH + 'px');
+}
+setTabsBottom();
+window.addEventListener('resize', setTabsBottom);
+window.addEventListener('load', setTabsBottom);
+// Hide global footer on editor tab (default active)
+(function(){ const sf = document.getElementById('siteFooter'); if(sf) sf.style.display='none'; })();
+
+// Fade shadow on sticky row when it becomes sticky
+const _stickyRow = document.querySelector('.editor-sticky-row');
+const _sentinel  = document.getElementById('stickysentinel');
+if (_stickyRow && _sentinel) {
+  new IntersectionObserver(
+    ([e]) => _stickyRow.classList.toggle('is-sticky', !e.isIntersecting),
+    { threshold: 0 }
+  ).observe(_sentinel);
+}
+
+// ── Reset all editor fields ──
+function resetPrompt() {
+  document.querySelectorAll('#tab-editor input[type=text], #tab-editor textarea').forEach(el => {
+    el.value = '';
+  });
+  selCamera = '';
+  selStyle = '';
+  selAngles.clear();
+  selSizes.clear();
+  selFraming.clear();
+  selMovements.clear();
+  refImageUrl = '';
+  const preview = document.getElementById('refImagePreview');
+  const placeholder = document.getElementById('refImagePlaceholder');
+  if (preview) { preview.style.display = 'none'; preview.src = ''; }
+  if (placeholder) placeholder.style.display = '';
+  const el = document.getElementById('fullPrompt');
+  if (el) el.textContent = '';
+  document.querySelectorAll('.preset-btn.active').forEach(b => b.classList.remove('active'));
+  if (typeof renderCameras === 'function') renderCameras();
+  if (typeof renderMovieStyles === 'function') renderMovieStyles();
+  if (typeof renderLenses === 'function') renderLenses();
+  if (typeof renderAngles === 'function') renderAngles();
+  if (typeof renderSizeViews === 'function') renderSizeViews();
+  if (typeof renderFramingViews === 'function') renderFramingViews();
+  if (typeof renderMovements === 'function') renderMovements();
+  updateRefImagePanel();
+}
+
 renderCameras();renderLenses();renderMovieStyles();renderAngles();renderSizeViews();renderFramingViews();renderMovements();
 updateModelSyntax();renderCharacters();renderMultishots();renderLibrary();renderWorkflow();
 
 </script>
 <div id="atDropdown" class="at-dropdown"></div>
-<footer style="
-    padding:1.5rem 0 2rem;
-    margin-top:.0,1rem;
-">
-  <div style="max-width:1400px;margin:0 auto;padding:0 2rem">
-  <div style="display:flex;align-items:center;gap:1.1rem">
-    <a href="http://www.rodeoclip.com" target="_blank">
-      <img src="images/rodeo-footer.png" alt="RODEO CLIP - Eye Candy Prompt Machine">
-    </a>
-    <div>
-	  <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px;margin-bottom:.0rem">
-        All rights reserved | <a href="http://www.rodeoclip.com" target="_blank">RODEO Clip</a> &copy; 2026
-      </div>
-	  <div style="font-size:.82rem;color:var(--text-secondary);letter-spacing:.2px">
-        RC Eye Candy Prompt Machine | Powered by <a href="https://claude.ai" target="_blank">Claude</a> | Operated by <a href="http://www.vorticoso.com" target="_blank">Vorticoso</a>
-      </div>
-    </div>
-  </div>
-  </div>
-</footer>
 </body>
 </html>
 <!-- ══════════════════════════════════════════════════════════════════════════════════
-     RC Eye Candy Prompt Machine V1.0 | Powered by Claude and operated by Vorticoso.Com
+     RC Eye Candy Prompt Machine V2.0 | Powered by Claude and operated by Vorticoso.Com
      All rights reserved | RodeoClip.Com © 2026
      ══════════════════════════════════════════════════════════════════════════════ -->
